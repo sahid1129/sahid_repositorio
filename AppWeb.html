@@ -38,15 +38,15 @@
         
         /* MODO DÍA: Blanco Limpio y Cómodo */
         .glass-ui {
-            background-color: #ffffff; /* Blanco sólido limpio */
-            border: 1px solid #e2e8f0; /* Borde slate-200 muy sutil */
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
             transition: all 0.3s ease;
         }
 
         /* MODO NOCHE: Negro Translúcido */
         html.dark .glass-ui {
-            background-color: rgba(30, 41, 59, 0.6); /* Slate-800 translúcido */
+            background-color: rgba(30, 41, 59, 0.6);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(71, 85, 105, 0.4);
@@ -54,12 +54,12 @@
         }
 
         /* --- EFECTO HOVER AMARILLO GLOBAL PARA TODOS LOS BOTONES --- */
-        button, a#btn-infopucp {
+        button, a.btn-global-hover {
             transition: all 0.3s ease !important;
         }
         
         /* Hover en MODO DÍA */
-        button:hover, a#btn-infopucp:hover {
+        button:not(.no-yellow-hover):hover, a.btn-global-hover:hover {
             background-color: #fef08a !important; /* Tailwind yellow-200 */
             color: #713f12 !important; /* Tailwind yellow-900 para alto contraste */
             border-color: #fde047 !important; /* Tailwind yellow-300 */
@@ -68,7 +68,7 @@
         }
         
         /* Hover en MODO NOCHE */
-        html.dark button:hover, html.dark a#btn-infopucp:hover {
+        html.dark button:not(.no-yellow-hover):hover, html.dark a.btn-global-hover:hover {
             background-color: #facc15 !important; /* Tailwind yellow-400 */
             color: #422006 !important; /* Tailwind yellow-950 */
             border-color: #eab308 !important; /* Tailwind yellow-500 */
@@ -84,7 +84,7 @@
             min-width: 320px;
         }
         
-        /* Tarjetas y Animaciones (Excluyendo del hover amarillo) */
+        /* Tarjetas y Animaciones */
         .task-card { cursor: grab; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .task-card:active { cursor: grabbing; transform: scale(0.98); }
         .task-card:hover { transform: translateY(-4px); box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.1); background-color: #f8fafc !important; }
@@ -93,7 +93,7 @@
         .drag-over { filter: brightness(1.1); transform: scale(1.02); border: 2px dashed #818cf8 !important; }
         html.dark .drag-over { filter: brightness(1.3); }
 
-        /* Overlays y Scrollbars */ se parados para evitar conflictos con el hover amarillo en botones y tarjetas
+        /* Overlays y Scrollbars */
         .glass-overlay { background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
         .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
@@ -101,6 +101,9 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.8); }
         html.dark .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0.6); }
         html.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.8); }
+        
+        /* Animaciones para Subtareas */
+        .subtask-item { transition: all 0.2s ease-in-out; }
     </style>
 </head>
 <body class="font-sans p-4 md:p-6 custom-scrollbar overflow-x-hidden">
@@ -126,7 +129,7 @@
                 <div class="relative z-10">
                     <span class="text-5xl mb-4 block">📊</span>
                     <h2 class="text-3xl font-black text-white tracking-tighter uppercase">Kanban Cloud BI</h2>
-                    <p class="text-indigo-100 text-sm font-medium mt-1">Gestión Colaborativa Infopucp</p>
+                    <p class="text-indigo-100 text-sm font-medium mt-1">Gestión Colaborativa Segura</p>
                 </div>
             </div>
 
@@ -187,12 +190,10 @@
     </div>
 
     <!-- HEADER PRINCIPAL -->
-    <!-- z-[60] mantiene el header debajo de los modales z-[200], pero encima de la tabla -->
     <header class="mb-10 relative z-[60]">
         <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-8 mb-8">
             
             <div class="relative z-[100]">
-                <!-- Titulo con colores suavizados -->
                 <h1 class="text-4xl font-black tracking-tighter mb-4 flex items-center gap-3">
                     <span class="text-blue-600 dark:text-blue-400 text-3xl">◆</span> 
                     <span class="text-blue-800 dark:text-blue-300">Kanban</span> 
@@ -211,12 +212,12 @@
                         <div class="h-4 w-px bg-slate-200 dark:bg-slate-600 mx-1"></div>
                         
                         <!-- Campana -->
-                        <div class="relative cursor-pointer group" onclick="toggleNotifications()">
+                        <div class="relative cursor-pointer group no-yellow-hover" onclick="toggleNotifications()">
                             <span class="text-lg hover:scale-110 transition-transform inline-block text-amber-500 dark:text-amber-400">🔔</span>
                             <span id="notif-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-black rounded-full h-3.5 w-3.5 flex items-center justify-center hidden shadow-md">0</span>
                         </div>
                         
-                        <!-- Dropdown Notificaciones (Z-Index superior) -->
+                        <!-- Dropdown Notificaciones -->
                         <div id="notif-dropdown" class="hidden absolute top-full mt-3 left-0 w-72 glass-ui rounded-2xl shadow-2xl z-[120] overflow-hidden transform origin-top-left transition-all">
                             <div class="p-3 border-b border-slate-100 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-900/50">
                                 <h4 class="text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest">Notificaciones</h4>
@@ -225,9 +226,13 @@
                         </div>
                     </div>
 
-                    <!-- Controles Rápidos -->
+                    <!-- Controles Rápidos y Enlaces Dinámicos -->
+                    <div class="flex items-center gap-2 flex-wrap" id="dynamic-quick-links">
+                        <a id="btn-infopucp" href="#" target="_blank" class="glass-ui text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-full text-[10px] font-black uppercase inline-block btn-global-hover">INFOPUCP 🎓</a>
+                        <!-- Aquí se insertarán más enlaces dinámicos -->
+                    </div>
+                    
                     <div class="flex items-center gap-2 flex-wrap">
-                        <a id="btn-infopucp" href="#" target="_blank" class="glass-ui text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-full text-[10px] font-black uppercase inline-block">INFOPUCP 🎓</a>
                         <button onclick="toggleDarkMode()" id="btn-dark-mode" class="glass-ui text-amber-600 dark:text-amber-400 px-5 py-2.5 rounded-full text-[10px] font-black uppercase">🌙 MODO NOCHE</button>
                         <button onclick="logout()" class="glass-ui text-red-600 dark:text-red-400 px-5 py-2.5 rounded-full text-[10px] font-black uppercase">SALIR 🚪</button>
                     </div>
@@ -245,9 +250,9 @@
                 </div>
                 <div class="flex flex-wrap items-center gap-2 border-l-2 pl-4 border-slate-200 dark:border-slate-700/50">
                     <button onclick="toggleMasterFileStatus()" class="text-indigo-700 bg-indigo-50 dark:bg-transparent dark:text-slate-300 px-4 py-2 rounded-xl text-[9px] font-black uppercase border border-transparent">🔄 Estado</button>
-                    <button onclick="openFileLinkWithInternalLog()" class="bg-indigo-600/90 dark:bg-indigo-500/80 text-white px-4 py-2 rounded-xl flex items-center gap-2 border border-indigo-500/50"><span class="text-[9px] font-black uppercase">📂 Abrir Drive</span></button>
+                    <button id="btn-open-drive" onclick="openFileLinkWithInternalLog()" class="bg-indigo-600/90 dark:bg-indigo-500/80 text-white px-4 py-2 rounded-xl flex items-center gap-2 border border-indigo-500/50 transition-all"><span class="text-[9px] font-black uppercase">📂 Abrir Drive</span></button>
                     <button onclick="downloadAccessLogs()" class="bg-emerald-500/90 dark:bg-emerald-500/80 text-white px-4 py-2 rounded-xl flex items-center gap-2 border border-emerald-500/50"><span class="text-[9px] font-black uppercase">Auditoría</span></button>
-                    <button onclick="openFileEditModal()" class="text-slate-600 dark:text-slate-300 p-2 rounded-xl border border-transparent">⚙️</button>
+                    <button id="btn-settings-config" onclick="openFileEditModal()" class="hidden text-slate-600 dark:text-slate-300 p-2 rounded-xl border border-transparent" title="Configuraciones (Solo Admin)">⚙️</button>
                 </div>
             </div>
         </div>
@@ -257,8 +262,8 @@
             <button onclick="openModal()" class="bg-indigo-500/90 dark:bg-indigo-500/80 text-white px-6 py-3 rounded-2xl font-black shadow-md w-full lg:w-auto flex items-center justify-center gap-2 uppercase text-xs border border-indigo-400/50">
                 <span class="text-lg leading-none">+</span> Nueva Tarea
             </button>
-            <!-- Botón de Roles -->
-            <button onclick="openRoleModal()" class="glass-ui px-6 py-3 rounded-2xl font-black w-full lg:w-auto uppercase text-xs text-indigo-800 dark:text-indigo-300">
+            <!-- Botón de Roles (Solo ADMIN) -->
+            <button id="btn-roles-config" onclick="openRoleModal()" class="hidden glass-ui px-6 py-3 rounded-2xl font-black w-full lg:w-auto uppercase text-xs text-indigo-800 dark:text-indigo-300">
                 🛡️ Roles
             </button>
             <!-- Tablero / Historial Glass -->
@@ -281,7 +286,7 @@
         </div>
     </header>
 
-    <!-- KANBAN VIEW (Colores alzados y sólidos en Modo Día) -->
+    <!-- KANBAN VIEW -->
     <div id="kanban-view" class="flex gap-6 overflow-x-auto pb-8 custom-scrollbar items-start relative z-10">
         <div id="col-backlog" class="kanban-column flex-shrink-0 bg-blue-50 dark:bg-slate-800/40 border border-blue-200 dark:border-slate-700/50 shadow-sm" ondrop="drop(event, 'backlog')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
             <h2 class="text-[11px] font-black text-blue-800 dark:text-slate-300 uppercase mb-5 px-1 flex justify-between items-center"><span>📥 Backlog</span> <span id="badge-backlog" class="bg-blue-600 dark:bg-slate-900 text-white shadow-sm px-2.5 py-0.5 rounded-full text-[9px]">0</span></h2>
@@ -313,7 +318,7 @@
         </div>
     </div>
 
-    <!-- MODAL TAREAS (Z-index elevado a 200) -->
+    <!-- MODAL TAREAS -->
     <div id="modal-overlay" class="fixed inset-0 hidden flex items-center justify-center p-4 z-[200] glass-overlay">
         <div class="glass-ui !bg-white/95 dark:!bg-slate-800/90 rounded-[2rem] shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col md:flex-row h-[90vh]">
             <div class="p-8 border-r border-slate-200 dark:border-slate-700/50 flex-1 overflow-y-auto custom-scrollbar cursor-default">
@@ -321,9 +326,10 @@
                 <form id="task-form" class="space-y-5">
                     <input type="hidden" id="edit-id">
                     <div>
-                        <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-2">Actividad 📝</label>
-                        <input type="text" id="task-title" required class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-4 text-sm font-bold outline-none focus:border-indigo-500/50 transition-colors">
+                        <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-2">Actividad / Grupo Principal 📝</label>
+                        <input type="text" id="task-title" required placeholder="Ej. Diseño del Dashboard..." class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-4 text-sm font-bold outline-none focus:border-indigo-500/50 transition-colors">
                     </div>
+                    
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
                             <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-2">Responsable 👤</label>
@@ -335,6 +341,16 @@
                             <select id="task-role" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3.5 text-sm font-bold outline-none focus:border-indigo-500/50 cursor-pointer transition-colors"></select>
                         </div>
                     </div>
+
+                    <!-- SECCIÓN: SUBTAREAS -->
+                    <div class="pt-2">
+                        <label class="flex justify-between items-center text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-2 border-b border-slate-200 dark:border-slate-700/50 pb-2">
+                            <span>Agrupación de Tareas (Subtareas) 📋</span>
+                            <button type="button" onclick="window.addSubtaskInput()" class="text-indigo-600 dark:text-amber-400 hover:scale-105 transition-transform bg-transparent border-0 p-0 shadow-none no-yellow-hover">➕ Añadir Subtarea</button>
+                        </label>
+                        <div id="task-subtasks-container" class="space-y-2 mt-2"></div>
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                         <div>
                             <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-2">Estado 📌</label>
@@ -355,7 +371,15 @@
                         <input type="text" id="task-labels" list="label-suggestions" placeholder="Ej. #Dashboard, #DAX" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3.5 text-sm outline-none focus:border-indigo-500/50 transition-colors">
                         <datalist id="label-suggestions"></datalist>
                     </div>
-                    <div><label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-2">Link Drive 🔗</label><input type="url" id="task-link" placeholder="https://..." class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3.5 text-sm outline-none focus:border-indigo-500/50 transition-colors"></div>
+
+                    <!-- SECCIÓN: MÚLTIPLES ENLACES -->
+                    <div class="pt-2">
+                        <label class="flex justify-between items-center text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-2 border-b border-slate-200 dark:border-slate-700/50 pb-2">
+                            <span>Enlaces Adjuntos 🔗</span>
+                            <button type="button" onclick="window.addLinkInput()" class="text-indigo-600 dark:text-amber-400 hover:scale-105 transition-transform bg-transparent border-0 p-0 shadow-none no-yellow-hover">➕ Añadir Enlace</button>
+                        </label>
+                        <div id="task-links-container" class="space-y-2 mt-2"></div>
+                    </div>
                     
                     <div class="flex flex-wrap justify-between items-center gap-4 mt-10 pt-6 border-t border-slate-200 dark:border-slate-700/50">
                         <button type="button" id="btn-delete-task" onclick="deleteCurrentTask()" class="px-5 py-2 text-xs font-black text-red-600 uppercase">🗑️ Eliminar</button>
@@ -386,24 +410,34 @@
         </div>
     </div>
 
-    <!-- MODAL CONFIGURACIÓN LINKS Y EQUIPO (Z-index 200) -->
+    <!-- MODAL CONFIGURACIÓN LINKS Y EQUIPO (Solo ADMIN) -->
     <div id="file-modal-overlay" class="fixed inset-0 hidden flex items-center justify-center p-4 z-[200] glass-overlay">
         <div class="glass-ui !bg-white/95 dark:!bg-slate-800/90 rounded-[2rem] shadow-2xl w-full max-w-xl p-10 overflow-y-auto max-h-[90vh] custom-scrollbar cursor-default">
             <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-6">Configuración de Proyecto</h3>
             <div class="space-y-8">
                 <div class="bg-slate-50/50 dark:bg-slate-900/50 backdrop-blur-sm p-6 rounded-2xl border border-slate-200 dark:border-slate-700/50">
-                    <h4 class="text-[10px] font-black text-indigo-700 dark:text-amber-400 uppercase mb-4 tracking-widest">Accesos Rápidos</h4>
+                    <h4 class="text-[10px] font-black text-indigo-700 dark:text-amber-400 uppercase mb-4 tracking-widest">Accesos Rápidos Base</h4>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-1">Carpeta Drive 📂</label>
+                            <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-1">Carpeta Drive Maestro 📂</label>
                             <input type="url" id="edit-drive-link" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-xs font-bold outline-none focus:border-indigo-500/50">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-1">Enlace INFOPUCP 🎓</label>
+                            <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-1">Enlace INFOPUCP Base 🎓</label>
                             <input type="url" id="edit-pucp-link" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-xs font-bold outline-none focus:border-indigo-500/50">
                         </div>
                     </div>
                 </div>
+
+                <!-- NUEVA SECCIÓN: BOTONES DINÁMICOS -->
+                <div class="pt-6 border-t border-slate-200 dark:border-slate-700/50">
+                    <label class="flex justify-between items-center text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-2 pb-2">
+                        <span>Botones de Acceso Rápido Dinámicos 🔗</span>
+                        <button type="button" onclick="window.addCustomLinkInput()" class="text-indigo-600 dark:text-amber-400 hover:scale-105 transition-transform bg-transparent border-0 p-0 shadow-none no-yellow-hover">➕ Añadir Botón</button>
+                    </label>
+                    <div id="custom-links-config-container" class="space-y-2 mt-2"></div>
+                </div>
+
                 <div class="pt-6 border-t border-slate-200 dark:border-slate-700/50">
                     <h4 class="text-[10px] font-black text-indigo-700 dark:text-amber-400 uppercase mb-4 tracking-widest">Gestión del Equipo 👤</h4>
                     <div id="team-list" class="space-y-2 mb-4 grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
@@ -416,7 +450,7 @@
         </div>
     </div>
 
-    <!-- MODAL ROLES (Z-index 200) -->
+    <!-- MODAL ROLES (Solo ADMIN) -->
     <div id="role-modal-overlay" class="fixed inset-0 hidden flex items-center justify-center p-4 z-[200] glass-overlay">
         <div class="glass-ui !bg-white/95 dark:!bg-slate-800/90 rounded-[2rem] shadow-2xl w-full max-w-md p-10 cursor-default">
             <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-6">Roles 🛡️</h3>
@@ -436,7 +470,7 @@
         </div>
     </div>
 
-    <!-- MODAL VALIDACIÓN (Z-index 210) -->
+    <!-- MODAL VALIDACIÓN -->
     <div id="validation-modal-overlay" class="fixed inset-0 hidden flex items-center justify-center p-4 z-[210] glass-overlay">
         <div class="glass-ui !bg-white/95 dark:!bg-slate-800/90 rounded-[2rem] shadow-2xl p-8 max-w-sm w-full text-center cursor-default">
             <h4 id="validation-title" class="text-2xl font-black text-slate-900 dark:text-slate-100 mb-4 tracking-tighter">Detalle</h4>
@@ -451,7 +485,7 @@
         </div>
     </div>
 
-    <!-- SISTEMA DE ALERTAS (Z-index 220) -->
+    <!-- SISTEMA DE ALERTAS -->
     <div id="alert-overlay" class="fixed inset-0 hidden flex items-center justify-center p-4 z-[220] glass-overlay">
         <div class="glass-ui !bg-white/95 dark:!bg-slate-800/95 rounded-[2rem] shadow-2xl p-10 max-w-sm text-center border-t-[8px] border-red-500 relative overflow-hidden cursor-default">
             <div class="w-20 h-20 bg-red-100/50 dark:bg-red-900/30 backdrop-blur-sm text-red-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-4 border border-red-200/50 dark:border-red-800/50">⚠️</div>
@@ -483,14 +517,13 @@
         let tasks = [];
         let roles = [];
         let registeredUsers = [];
-        let config = { available: true, link: '#', infoPucpLink: '#' };
+        let config = { available: true, link: '#', infoPucpLink: '#', customLinks: [] };
         
         let currentFilter = 'all';
         let currentAssigneeFilter = 'all';
         let currentView = 'kanban';
         let heartbeatInterval = null;
 
-        // --- MODO OSCURO ---
         window.toggleDarkMode = () => {
             const html = document.documentElement;
             html.classList.toggle('dark');
@@ -508,7 +541,6 @@
         }
         document.addEventListener('DOMContentLoaded', updateDarkModeButton);
 
-        // --- PRESENCIA Y DESCONEXIÓN (Heartbeat) ---
         window.addEventListener('beforeunload', () => {
             if (currentUser) {
                 const me = registeredUsers.find(u => u.name === currentUser);
@@ -553,19 +585,43 @@
             }
             currentUser = null;
             localStorage.removeItem('bi_kanban_user');
-            
             window.location.reload();
         };
 
-        // --- UI Y RENDERIZADO ---
+        // --- VALIDAR ACCESOS ADMIN ---
+        function checkAdminAccess() {
+            const isAdmin = currentUser && currentUser.toUpperCase() === 'ADMIN';
+            const btnRoles = document.getElementById('btn-roles-config');
+            const btnSettings = document.getElementById('btn-settings-config');
+            
+            if (btnRoles) {
+                if (isAdmin) btnRoles.classList.remove('hidden');
+                else btnRoles.classList.add('hidden');
+            }
+            if (btnSettings) {
+                if (isAdmin) btnSettings.classList.remove('hidden');
+                else btnSettings.classList.add('hidden');
+            }
+        }
 
         function updateStatusUI() {
             const ind = document.getElementById('status-indicator');
             const txt = document.getElementById('status-text');
+            const btnDrive = document.getElementById('btn-open-drive');
+            
             if(!ind || !txt) return;
             ind.className = `w-3.5 h-3.5 rounded-full border-2 border-white/50 dark:border-slate-700 ${config.available ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]' : 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)]'}`;
             txt.innerText = config.available ? 'DISPONIBLE ✅' : 'EN USO ⛔';
             txt.className = `text-[11px] font-black uppercase ${config.available ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500'}`;
+
+            // Efecto visual cuando no está disponible el drive
+            if (btnDrive) {
+                if (config.available) {
+                    btnDrive.classList.remove('opacity-50', 'cursor-not-allowed', 'saturate-0');
+                } else {
+                    btnDrive.classList.add('opacity-50', 'cursor-not-allowed', 'saturate-0');
+                }
+            }
         }
 
         window.renderOnlineUsers = () => {
@@ -604,9 +660,7 @@
             }
         };
 
-        window.toggleNotifications = () => {
-            document.getElementById('notif-dropdown').classList.toggle('hidden');
-        };
+        window.toggleNotifications = () => { document.getElementById('notif-dropdown').classList.toggle('hidden'); };
 
         window.openNotification = (taskId, notifId) => {
             const me = registeredUsers.find(u => u.name === currentUser);
@@ -637,7 +691,7 @@
                 return `
                 <div class="flex items-center justify-between glass-ui p-3 rounded-xl">
                     <span class="text-[10px] font-bold text-slate-800 dark:text-slate-300 uppercase">👤 ${u.name} ${isOnline ? '<span class="text-emerald-500 ml-1 text-xs">●</span>' : ''}</span>
-                    <button onclick="window.deleteUser('${u.id}')" class="text-slate-500 hover:text-red-600 transition-colors">🗑️</button>
+                    <button type="button" onclick="window.deleteUser('${u.id}')" class="text-slate-500 hover:text-red-600 transition-colors bg-transparent shadow-none border-0">🗑️</button>
                 </div>`;
             }).join('') || '<p class="text-[9px] text-slate-500 italic col-span-2">No hay responsables registrados</p>';
         }
@@ -698,6 +752,61 @@
             list.scrollTop = list.scrollHeight;
         }
 
+        // --- SISTEMA DINÁMICO DE ENLACES GENERALES Y TAREAS ---
+        window.addCustomLinkInput = (title = '', url = '') => {
+            const container = document.getElementById('custom-links-config-container');
+            const div = document.createElement('div');
+            div.className = 'flex gap-2 items-center custom-link-item mb-2';
+            div.innerHTML = `
+                <input type="text" value="${title}" placeholder="Nombre Corto" class="custom-link-title w-1/3 glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-xs outline-none focus:border-indigo-500/50 transition-colors">
+                <input type="url" value="${url}" placeholder="https://..." class="custom-link-url flex-1 glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-xs outline-none focus:border-indigo-500/50 transition-colors">
+                <button type="button" onclick="this.parentElement.remove()" class="bg-red-50 dark:bg-red-900/30 text-red-500 hover:text-red-700 hover:bg-red-100 p-3 rounded-xl border border-transparent shadow-none transition-colors">❌</button>
+            `;
+            container.appendChild(div);
+        };
+
+        window.addLinkInput = (val = '') => {
+            const container = document.getElementById('task-links-container');
+            const div = document.createElement('div');
+            div.className = 'flex gap-2 items-center';
+            div.innerHTML = `
+                <input type="url" value="${val}" placeholder="https://mi-enlace.com" class="link-input flex-1 glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-sm outline-none focus:border-indigo-500/50 transition-colors">
+                <button type="button" onclick="this.parentElement.remove()" class="bg-red-50 dark:bg-red-900/30 text-red-500 hover:text-red-700 hover:bg-red-100 p-3 rounded-xl border border-transparent shadow-none transition-colors">❌</button>
+            `;
+            container.appendChild(div);
+        };
+
+        window.addSubtaskInput = (title = '', done = false) => {
+            const container = document.getElementById('task-subtasks-container');
+            const div = document.createElement('div');
+            div.className = 'flex gap-2 items-center subtask-item';
+            div.innerHTML = `
+                <input type="checkbox" class="subtask-done-cb w-5 h-5 rounded border-slate-300 cursor-pointer" ${done ? 'checked' : ''}>
+                <input type="text" value="${title}" placeholder="Título de la tarea agrupada..." class="subtask-title-input flex-1 glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-sm outline-none focus:border-indigo-500/50 transition-colors">
+                <button type="button" onclick="this.parentElement.remove()" class="bg-red-50 dark:bg-red-900/30 text-red-500 hover:text-red-700 hover:bg-red-100 p-3 rounded-xl border border-transparent shadow-none transition-colors">❌</button>
+            `;
+            container.appendChild(div);
+        };
+
+        // --- COMPLETAR/DESMARCAR SUBTAREA DESDE TABLERO ---
+        window.toggleSubtask = async (taskId, subindex) => {
+            const task = tasks.find(t => t.id === taskId);
+            if(!task || !task.subtasks) return;
+            
+            const newSubtasks = [...task.subtasks];
+            newSubtasks[subindex].done = !newSubtasks[subindex].done;
+            
+            // Actualización optimista de UI
+            task.subtasks = newSubtasks; 
+            renderUI(); 
+            
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', taskId), { subtasks: newSubtasks });
+            } catch(err) {
+                window.showAlert("Error al actualizar la subtarea: " + err.message);
+            }
+        };
+
         function renderUI() {
             const statuses = ['backlog', 'todo', 'progress', 'review', 'done'];
             const allLabels = new Set();
@@ -727,7 +836,6 @@
                     const role = roles.find(r => r.id === task.role) || {color:'#ccc', emoji:'❓'};
                     const card = document.createElement('div');
                     
-                    // Tarjetas no son "buttons", su hover no será amarillo, pero sí interactivo
                     card.className = `task-card glass-ui p-5 rounded-[1.25rem] relative overflow-hidden`;
                     card.draggable = true;
                     card.id = `task-${task.id}`;
@@ -736,7 +844,40 @@
                     
                     const tags = (task.labels || []).map(l => `<span class="text-[8px] font-black text-slate-700 dark:text-slate-200 mr-1 bg-slate-100 dark:bg-slate-700/50 backdrop-blur-sm px-2 py-1 rounded-md uppercase border border-slate-200 dark:border-slate-600/30 cursor-default">${l}</span>`).join('');
                     
-                    const driveButton = task.link ? `<button type="button" onclick="event.stopPropagation(); window.open('${task.link}', '_blank')" class="mt-4 w-full py-2.5 bg-slate-50 dark:bg-slate-700/50 text-slate-800 dark:text-white text-[9px] font-black rounded-xl border border-slate-200 dark:border-slate-600/50 uppercase shadow-sm flex items-center justify-center gap-2">📂 Abrir Drive</button>` : '';
+                    // Renderizado de múltiples enlaces
+                    const taskLinks = task.links || (task.link ? [task.link] : []);
+                    const linksHtml = taskLinks.map((l, idx) => `
+                        <button type="button" onclick="event.stopPropagation(); window.open('${l}', '_blank')" class="mt-2 w-full py-2 bg-slate-50 dark:bg-slate-700/50 text-slate-800 dark:text-white text-[9px] font-black rounded-xl border border-slate-200 dark:border-slate-600/50 uppercase shadow-sm flex items-center justify-center gap-2">📂 Link ${taskLinks.length > 1 ? idx+1 : 'Drive'}</button>
+                    `).join('');
+
+                    // Renderizado de múltiples subtareas animadas
+                    const subtasks = task.subtasks || [];
+                    let subtasksHtml = '';
+                    if (subtasks.length > 0) {
+                        const doneCount = subtasks.filter(st => st.done).length;
+                        const progress = (doneCount / subtasks.length) * 100;
+                        subtasksHtml = `
+                            <div class="mt-4 mb-2">
+                                <div class="flex justify-between items-center mb-1.5">
+                                    <span class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Tareas del Grupo (${doneCount}/${subtasks.length})</span>
+                                    <span class="text-[9px] font-black text-indigo-500 dark:text-amber-400">${Math.round(progress)}%</span>
+                                </div>
+                                <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full mb-3 overflow-hidden">
+                                    <div class="bg-indigo-500 dark:bg-amber-500 h-1.5 rounded-full transition-all duration-500 ease-out" style="width: ${progress}%"></div>
+                                </div>
+                                <div class="space-y-1.5">
+                                    ${subtasks.map((st, i) => `
+                                        <div class="subtask-item flex items-center gap-2.5 bg-slate-50/80 dark:bg-slate-800/80 p-2 rounded-lg border border-slate-100 dark:border-slate-600/30 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors cursor-pointer group" onclick="event.stopPropagation(); window.toggleSubtask('${task.id}', ${i})">
+                                            <div class="w-4 h-4 rounded-[4px] border ${st.done ? 'bg-indigo-500 border-indigo-500 dark:bg-amber-500 dark:border-amber-500 text-white' : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-500'} flex items-center justify-center transition-colors flex-shrink-0">
+                                                ${st.done ? '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
+                                            </div>
+                                            <span class="text-[10px] font-bold ${st.done ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-200'} transition-all">${st.title}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }
 
                     let validationButtons = '';
                     if (task.status === 'review') {
@@ -752,8 +893,9 @@
                     card.innerHTML = `
                         <div class="h-1.5 w-full absolute top-0 left-0 opacity-80" style="background-color: ${role.color}"></div>
                         <div class="mb-3 flex flex-wrap gap-1 mt-1">${tags}</div>
-                        <h3 class="font-black text-slate-900 dark:text-slate-100 text-sm mb-3 leading-snug">${task.title}</h3>
-                        ${driveButton}
+                        <h3 class="font-black text-slate-900 dark:text-slate-100 text-sm mb-1 leading-snug">${task.title}</h3>
+                        ${subtasksHtml}
+                        <div class="mt-2 space-y-1">${linksHtml}</div>
                         ${validationButtons}
                         <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-200 dark:border-slate-600/30 cursor-default">
                             <span class="text-[9px] font-black text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-700/50 backdrop-blur-sm border border-slate-200 dark:border-slate-600/30 px-3 py-1.5 rounded-full uppercase flex items-center gap-1">👤 ${task.assignee ? task.assignee.split(' ')[0] : 'S/A'}</span>
@@ -785,8 +927,6 @@
             updateFilterUI(Array.from(allLabels));
             updateSuggestions(Array.from(allAssignees), Array.from(allLabels));
         }
-
-        // --- SISTEMA FIREBASE ---
 
         function setLoaderError(msg, detail = "") {
             const loaderText = document.getElementById('loader-text');
@@ -843,6 +983,7 @@
             document.getElementById('display-user').innerText = `👤 ${currentUser.toUpperCase()}`;
             
             startPresenceHeartbeat();
+            checkAdminAccess(); // Revisar si es admin
 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'roles'), (snap) => {
                 roles = snap.docs.map(d => ({id: d.id, ...d.data()}));
@@ -872,8 +1013,20 @@
                     config = snap.data(); 
                     updateStatusUI(); 
                     document.getElementById('btn-infopucp').href = config.infoPucpLink || '#';
+                    
+                    // Renderizar botones dinámicos en el header
+                    const dynamicLinksContainer = document.getElementById('dynamic-quick-links');
+                    if (dynamicLinksContainer) {
+                        const customLinks = config.customLinks || [];
+                        const htmlLinks = customLinks.map(l => `<a href="${l.url}" target="_blank" class="glass-ui text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-full text-[10px] font-black uppercase inline-block btn-global-hover">${l.title} 🔗</a>`).join('');
+                        
+                        dynamicLinksContainer.innerHTML = `
+                            <a id="btn-infopucp" href="${config.infoPucpLink || '#'}" target="_blank" class="glass-ui text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-full text-[10px] font-black uppercase inline-block btn-global-hover">INFOPUCP 🎓</a>
+                            ${htmlLinks}
+                        `;
+                    }
                 } else { 
-                    setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'master'), { available: true, link: '#', infoPucpLink: '#' });
+                    setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'master'), { available: true, link: '#', infoPucpLink: '#', customLinks: [] });
                 }
             }, (err) => console.error("Config Sync Error:", err));
         }
@@ -887,8 +1040,6 @@
             ];
             for (const r of defaults) { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'roles'), r); }
         }
-
-        // --- GESTIÓN DE SESIÓN Y LOGIN ---
 
         window.toggleRegisterView = (show) => {
             const loginV = document.getElementById('login-view');
@@ -990,8 +1141,6 @@
             `).join('') || '<p class="col-span-2 text-[9px] text-slate-500 italic text-center py-4">No hay responsables</p>';
         };
 
-        // --- SISTEMA DE MENCIONES ---
-        
         const commentInput = document.getElementById('comment-input');
         const mentionDropdown = document.getElementById('mention-dropdown');
         
@@ -1008,7 +1157,7 @@
                     
                     if (filteredUsers.length > 0) {
                         mentionDropdown.innerHTML = filteredUsers.map(u => `
-                            <div class="px-4 py-3 hover:bg-yellow-100/50 dark:hover:bg-slate-700/50 cursor-pointer border-b border-slate-200 dark:border-slate-600/50 last:border-0 transition-colors"
+                            <div class="px-4 py-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer border-b border-slate-200 dark:border-slate-600/50 last:border-0 transition-colors"
                                  onclick="window.insertMention('${u.name}')">
                                 <p class="text-[11px] font-black text-slate-800 dark:text-slate-200">@${u.name}</p>
                             </div>
@@ -1032,16 +1181,21 @@
             commentInput.focus();
         };
 
-        // --- RESTO DE MÉTODOS DE LA APP ---
-
         window.deleteUser = async (id) => {
             if (confirm("¿Eliminar este responsable?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', id));
         };
 
+        // --- GUARDAR ENLACES DINÁMICOS GENERALES ---
         window.saveConfigLinks = async () => {
+            const customLinks = Array.from(document.querySelectorAll('.custom-link-item')).map(div => ({
+                title: div.querySelector('.custom-link-title').value.trim(),
+                url: div.querySelector('.custom-link-url').value.trim()
+            })).filter(l => l.title && l.url);
+
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'master'), { 
                 link: document.getElementById('edit-drive-link').value,
-                infoPucpLink: document.getElementById('edit-pucp-link').value
+                infoPucpLink: document.getElementById('edit-pucp-link').value,
+                customLinks: customLinks
             });
             window.closeFileEditModal();
         };
@@ -1061,7 +1215,19 @@
             document.getElementById('task-date-start').value = task.dateStart || '';
             document.getElementById('task-date-end').value = task.dateEnd || '';
             document.getElementById('task-labels').value = (task.labels || []).join(', ');
-            document.getElementById('task-link').value = task.link || '';
+            
+            // Llenar enlaces múltiples o migrar el único antiguo
+            const linksContainer = document.getElementById('task-links-container');
+            linksContainer.innerHTML = '';
+            const taskLinks = task.links || (task.link ? [task.link] : []);
+            taskLinks.forEach(l => window.addLinkInput(l));
+
+            // Llenar subtareas
+            const subtasksContainer = document.getElementById('task-subtasks-container');
+            subtasksContainer.innerHTML = '';
+            const subtasks = task.subtasks || [];
+            subtasks.forEach(st => window.addSubtaskInput(st.title, st.done));
+
             document.getElementById('btn-delete-task').classList.remove('hidden');
             document.getElementById('btn-archive-task').classList.toggle('hidden', task.status === 'archived');
             document.getElementById('modal-overlay').classList.remove('hidden');
@@ -1092,7 +1258,7 @@
 
         window.deleteCurrentTask = async () => {
             const id = document.getElementById('edit-id').value;
-            if (id && confirm("¿Eliminar actividad?")) { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id)); window.closeModal(); }
+            if (id && confirm("¿Eliminar actividad permanentemente?")) { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id)); window.closeModal(); }
         };
 
         window.archiveCurrentTask = async () => {
@@ -1134,8 +1300,14 @@
             renderComments(newComments);
         };
 
+        // --- BLOQUEO DE ENTRADA AL DRIVE SI ESTÁ EN USO ---
         window.openFileLinkWithInternalLog = async () => {
+            if (!config.available) {
+                window.showAlert("El archivo maestro está EN USO por otro usuario. No puedes ingresar en este momento.");
+                return;
+            }
             if (!config.link || config.link === '#') return;
+            
             const now = new Date();
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'accessLogs'), { 
                 user: currentUser, action: 'Abrió Drive Maestro', timestamp: Date.now(), date: now.toLocaleDateString(), time: now.toLocaleTimeString()
@@ -1161,13 +1333,23 @@
             document.getElementById('task-assignee').value = currentUser;
             const today = new Date();
             document.getElementById('task-date-start').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+            
+            // Vaciar contenedores de subtablas y enlaces
+            document.getElementById('task-links-container').innerHTML = '';
+            document.getElementById('task-subtasks-container').innerHTML = '';
+
             document.getElementById('modal-overlay').classList.remove('hidden'); 
             renderComments([]); 
         };
         
         window.closeModal = () => document.getElementById('modal-overlay').classList.add('hidden');
-        window.openRoleModal = () => document.getElementById('role-modal-overlay').classList.remove('hidden');
+        
+        window.openRoleModal = () => {
+            if (currentUser?.toUpperCase() !== 'ADMIN') return window.showAlert("Acceso denegado: Solo el ADMIN puede configurar los roles.");
+            document.getElementById('role-modal-overlay').classList.remove('hidden');
+        };
         window.closeRoleModal = () => document.getElementById('role-modal-overlay').classList.add('hidden');
+        
         window.switchView = (view) => {
             currentView = view;
             document.getElementById('kanban-view').classList.toggle('hidden', view !== 'kanban');
@@ -1181,13 +1363,21 @@
         window.closeAlert = () => document.getElementById('alert-overlay').classList.add('hidden');
         
         window.openFileEditModal = () => { 
+            if (currentUser?.toUpperCase() !== 'ADMIN') return window.showAlert("Acceso denegado: Solo el ADMIN puede acceder a la configuración del proyecto.");
+            
             document.getElementById('edit-drive-link').value = config.link || ''; 
             document.getElementById('edit-pucp-link').value = config.infoPucpLink || '';
+            
+            // Cargar enlaces dinámicos en el modal de configuración
+            const customLinksConfigContainer = document.getElementById('custom-links-config-container');
+            customLinksConfigContainer.innerHTML = '';
+            const customLinks = config.customLinks || [];
+            customLinks.forEach(l => window.addCustomLinkInput(l.title, l.url));
+
             document.getElementById('file-modal-overlay').classList.remove('hidden'); 
         };
         window.closeFileEditModal = () => document.getElementById('file-modal-overlay').classList.add('hidden');
 
-        // --- SISTEMA DE VALIDACIÓN ---
         window.startValidation = (taskId, type) => {
             if (type === 'valid') window.submitValidation(taskId, type, 'Aprobado sin observaciones.');
             else {
@@ -1233,19 +1423,12 @@
             } catch (err) { window.showAlert("Error: " + err.message); }
         };
 
-        // --- CORRECCIÓN ELIMINAR ROL ---
         window.deleteRole = async (id) => { 
-            if (!id) {
-                window.showAlert("Error interno: ID no encontrado.");
-                return;
-            }
+            if (!id) return;
             if (confirm("¿Estás seguro de que deseas eliminar este rol permanentemente?")) {
                 try {
                     await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'roles', id));
-                    // No es necesario alertar éxito si se borra rápidamente en la UI, pero puedes descomentar si lo prefieres
-                    // window.showAlert("Rol eliminado correctamente.");
                 } catch (err) {
-                    console.error("Error al eliminar rol:", err);
                     window.showAlert("Error al eliminar el rol: " + err.message);
                 }
             } 
@@ -1259,24 +1442,48 @@
                 const labelsInput = document.getElementById('task-labels').value;
                 const labels = labelsInput ? labelsInput.split(',').map(l => l.trim().startsWith('#') ? l.trim() : '#' + l.trim()).filter(l => l !== '#') : [];
 
+                // Extraer Links Dinámicos
+                const links = Array.from(document.querySelectorAll('.link-input')).map(i => i.value.trim()).filter(v => v);
+                
+                // Extraer Subtareas Dinámicas
+                const subtasks = Array.from(document.querySelectorAll('.subtask-item')).map(div => ({
+                    title: div.querySelector('.subtask-title-input').value.trim(),
+                    done: div.querySelector('.subtask-done-cb').checked
+                })).filter(st => st.title);
+
                 const data = {
-                    title: document.getElementById('task-title').value, role: document.getElementById('task-role').value,
-                    assignee: document.getElementById('task-assignee').value, status: document.getElementById('task-status').value || 'backlog',
-                    dateStart: document.getElementById('task-date-start').value, dateEnd: document.getElementById('task-date-end').value,
-                    labels: labels, link: document.getElementById('task-link').value, updatedBy: currentUser, timestamp: Date.now()
+                    title: document.getElementById('task-title').value, 
+                    role: document.getElementById('task-role').value,
+                    assignee: document.getElementById('task-assignee').value, 
+                    status: document.getElementById('task-status').value || 'backlog',
+                    dateStart: document.getElementById('task-date-start').value, 
+                    dateEnd: document.getElementById('task-date-end').value,
+                    labels: labels, 
+                    links: links, 
+                    subtasks: subtasks,
+                    updatedBy: currentUser, 
+                    timestamp: Date.now()
                 };
 
                 if (data.status === 'done' && (data.role && roles.find(r => r.id === data.role)?.name.toLowerCase().includes('dax') || data.title.toLowerCase().includes('dax'))) {
-                    if (tasks.filter(t => t.id !== id && (t.title.toLowerCase().includes('modelo') || t.title.toLowerCase().includes('relación')) && t.status !== 'done').length > 0) {
-                        window.showAlert(`Bloqueo: Finaliza el Modelo de Datos antes del DAX.`); return;
+                    const pendingModel = tasks.filter(t => t.id !== id && (t.title.toLowerCase().includes('modelo') || t.title.toLowerCase().includes('relación')) && t.status !== 'done');
+                    if (pendingModel.length > 0) {
+                        window.showAlert(`Bloqueo: Finaliza el Modelo de Datos antes del DAX.`);
+                        return;
                     }
                 }
 
                 try {
-                    if (id) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id), data);
-                    else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'tasks'), { ...data, comments: [] });
+                    if (id) {
+                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id), data);
+                    } else {
+                        data.comments = [];
+                        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'tasks'), data);
+                    }
                     window.closeModal();
-                } catch (err) { window.showAlert("Error: " + err.message); }
+                } catch (err) {
+                    window.showAlert("Error al guardar tarea: " + err.message);
+                }
             });
         }
 
