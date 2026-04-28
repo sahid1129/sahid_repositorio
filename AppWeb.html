@@ -250,7 +250,7 @@
                 </div>
                 <div class="flex flex-wrap items-center gap-2 border-l-2 pl-4 border-slate-200 dark:border-slate-700/50">
                     <button onclick="toggleMasterFileStatus()" class="text-indigo-700 bg-indigo-50 dark:bg-transparent dark:text-slate-300 px-4 py-2 rounded-xl text-[9px] font-black uppercase border border-transparent">🔄 Estado</button>
-                    <button id="btn-open-drive" onclick="openFileLinkWithInternalLog()" class="bg-indigo-600/90 dark:bg-indigo-500/80 text-white px-4 py-2 rounded-xl flex items-center gap-2 border border-indigo-500/50 transition-all"><span class="text-[9px] font-black uppercase">📂 Archivo Maestro</span></button>
+                    <button id="btn-open-drive" onclick="openFileLinkWithInternalLog()" class="bg-indigo-600/90 dark:bg-indigo-500/80 text-white px-4 py-2 rounded-xl flex items-center gap-2 border border-indigo-500/50 transition-all"><span class="text-[9px] font-black uppercase">📂 Abrir Drive</span></button>
                     <button onclick="downloadAccessLogs()" class="bg-emerald-500/90 dark:bg-emerald-500/80 text-white px-4 py-2 rounded-xl flex items-center gap-2 border border-emerald-500/50"><span class="text-[9px] font-black uppercase">Auditoría</span></button>
                     <button id="btn-settings-config" onclick="openFileEditModal()" class="hidden text-slate-600 dark:text-slate-300 p-2 rounded-xl border border-transparent" title="Configuraciones (Solo Admin)">⚙️</button>
                 </div>
@@ -419,7 +419,7 @@
                     <h4 class="text-[10px] font-black text-indigo-700 dark:text-amber-400 uppercase mb-4 tracking-widest">Accesos Rápidos Base</h4>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-1">Carpeta Drive Versiones 📂</label>
+                            <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-1">Carpeta Drive Maestro 📂</label>
                             <input type="url" id="edit-drive-link" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-xs font-bold outline-none focus:border-indigo-500/50">
                         </div>
                         <div>
@@ -1248,7 +1248,11 @@
             const taskId = ev.dataTransfer.getData("taskId");
             const task = tasks.find(t => t.id === taskId);
             if (task) {
-                if (newStatus === 'done' && (task.role && roles.find(r => r.id === task.role)?.name.toLowerCase().includes('dax') || task.title.toLowerCase().includes('dax'))) {
+                const roleObj = roles.find(r => r.id === task.role);
+                const roleName = roleObj ? roleObj.name.toLowerCase() : '';
+                const titleLower = (task.title || '').toLowerCase();
+
+                if (newStatus === 'done' && (roleName.includes('dax') || titleLower.includes('dax'))) {
                     const pendingModel = tasks.filter(t => (t.title.toLowerCase().includes('modelo') || t.title.toLowerCase().includes('relación')) && t.status !== 'done');
                     if (pendingModel.length > 0) { window.showAlert(`Bloqueo: Finaliza el Modelo de Datos antes del DAX.`); return; }
                 }
@@ -1256,9 +1260,31 @@
             }
         };
 
+        // --- SISTEMA DE SEGURIDAD PARA ELIMINAR TAREAS ---
         window.deleteCurrentTask = async () => {
             const id = document.getElementById('edit-id').value;
-            if (id && confirm("¿Eliminar actividad permanentemente?")) { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id)); window.closeModal(); }
+            if (!id) return;
+            
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+
+            const isAdmin = currentUser && currentUser.toUpperCase() === 'ADMIN';
+            const isOwner = task.assignee === currentUser;
+
+            // Bloquear si no es Admin y no es el dueño asignado
+            if (!isAdmin && !isOwner) {
+                window.showAlert(`Seguridad: Solo el responsable asignado (${task.assignee || 'Nadie'}) o el ADMIN pueden eliminar esta tarea.`);
+                return;
+            }
+
+            if (confirm("¿Eliminar actividad permanentemente?")) { 
+                try {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id)); 
+                    window.closeModal(); 
+                } catch (err) {
+                    window.showAlert("Error al eliminar: " + err.message);
+                }
+            }
         };
 
         window.archiveCurrentTask = async () => {
@@ -1438,42 +1464,53 @@
         if (taskForm) {
             taskForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                const id = document.getElementById('edit-id').value;
-                const labelsInput = document.getElementById('task-labels').value;
-                const labels = labelsInput ? labelsInput.split(',').map(l => l.trim().startsWith('#') ? l.trim() : '#' + l.trim()).filter(l => l !== '#') : [];
-
-                // Extraer Links Dinámicos
-                const links = Array.from(document.querySelectorAll('.link-input')).map(i => i.value.trim()).filter(v => v);
                 
-                // Extraer Subtareas Dinámicas
-                const subtasks = Array.from(document.querySelectorAll('.subtask-item')).map(div => ({
-                    title: div.querySelector('.subtask-title-input').value.trim(),
-                    done: div.querySelector('.subtask-done-cb').checked
-                })).filter(st => st.title);
-
-                const data = {
-                    title: document.getElementById('task-title').value, 
-                    role: document.getElementById('task-role').value,
-                    assignee: document.getElementById('task-assignee').value, 
-                    status: document.getElementById('task-status').value || 'backlog',
-                    dateStart: document.getElementById('task-date-start').value, 
-                    dateEnd: document.getElementById('task-date-end').value,
-                    labels: labels, 
-                    links: links, 
-                    subtasks: subtasks,
-                    updatedBy: currentUser, 
-                    timestamp: Date.now()
-                };
-
-                if (data.status === 'done' && (data.role && roles.find(r => r.id === data.role)?.name.toLowerCase().includes('dax') || data.title.toLowerCase().includes('dax'))) {
-                    const pendingModel = tasks.filter(t => t.id !== id && (t.title.toLowerCase().includes('modelo') || t.title.toLowerCase().includes('relación')) && t.status !== 'done');
-                    if (pendingModel.length > 0) {
-                        window.showAlert(`Bloqueo: Finaliza el Modelo de Datos antes del DAX.`);
-                        return;
-                    }
-                }
-
                 try {
+                    const id = document.getElementById('edit-id').value;
+                    const labelsInput = document.getElementById('task-labels').value;
+                    const labels = labelsInput ? labelsInput.split(',').map(l => l.trim().startsWith('#') ? l.trim() : '#' + l.trim()).filter(l => l !== '#') : [];
+
+                    // Extraer Links Dinámicos asegurando el contenedor del modal
+                    const linksContainer = document.getElementById('task-links-container');
+                    const links = Array.from(linksContainer.querySelectorAll('.link-input')).map(i => i.value.trim()).filter(v => v);
+                    
+                    // Extraer Subtareas Dinámicas asegurando el contenedor del modal
+                    const subtasksContainer = document.getElementById('task-subtasks-container');
+                    const subtasks = Array.from(subtasksContainer.querySelectorAll('.subtask-item')).map(div => {
+                        const titleInput = div.querySelector('.subtask-title-input');
+                        const cbInput = div.querySelector('.subtask-done-cb');
+                        return {
+                            title: titleInput ? titleInput.value.trim() : '',
+                            done: cbInput ? cbInput.checked : false
+                        };
+                    }).filter(st => st.title);
+
+                    const data = {
+                        title: document.getElementById('task-title').value, 
+                        role: document.getElementById('task-role').value,
+                        assignee: document.getElementById('task-assignee').value, 
+                        status: document.getElementById('task-status').value || 'backlog',
+                        dateStart: document.getElementById('task-date-start').value, 
+                        dateEnd: document.getElementById('task-date-end').value,
+                        labels: labels, 
+                        links: links, 
+                        subtasks: subtasks,
+                        updatedBy: currentUser, 
+                        timestamp: Date.now()
+                    };
+
+                    const roleObj = roles.find(r => r.id === data.role);
+                    const roleName = roleObj ? roleObj.name.toLowerCase() : '';
+                    const titleLower = (data.title || '').toLowerCase();
+
+                    if (data.status === 'done' && (roleName.includes('dax') || titleLower.includes('dax'))) {
+                        const pendingModel = tasks.filter(t => t.id !== id && (t.title.toLowerCase().includes('modelo') || t.title.toLowerCase().includes('relación')) && t.status !== 'done');
+                        if (pendingModel.length > 0) {
+                            window.showAlert(`Bloqueo: Finaliza el Modelo de Datos antes del DAX.`);
+                            return;
+                        }
+                    }
+
                     if (id) {
                         await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id), data);
                     } else {
@@ -1482,6 +1519,7 @@
                     }
                     window.closeModal();
                 } catch (err) {
+                    console.error("Error capturado al guardar: ", err);
                     window.showAlert("Error al guardar tarea: " + err.message);
                 }
             });
