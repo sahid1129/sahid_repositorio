@@ -6,12 +6,76 @@
     <title>KAN BAN PROYECT BI - Cloud</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+        // CONFIGURACIÓN CRÍTICA: Activar modo oscuro por clase en Tailwind
+        tailwind.config = {
+            darkMode: 'class',
+        }
+        
         // Prevenir flash de luz si el modo noche está activo
         if (localStorage.getItem('bi_kanban_theme') === 'dark') {
             document.documentElement.classList.add('dark');
         }
     </script>
     <style>
+        /* TRANSICIÓN BASE Y FONDOS MULTICOLOR INTACTOS */
+        body { 
+            transition: background-color 0.4s, color 0.4s; 
+            background-color: #f8fafc; 
+            background-image: radial-gradient(at 0% 0%, hsla(210, 100%, 95%, 1) 0px, transparent 50%),
+                              radial-gradient(at 100% 0%, hsla(280, 100%, 95%, 1) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: #1e293b; 
+        }
+        
+        html.dark body { 
+            background-color: #0b0f19; 
+            background-image: radial-gradient(at 0% 0%, hsla(220, 50%, 15%, 1) 0px, transparent 50%),
+                              radial-gradient(at 100% 0%, hsla(280, 40%, 15%, 1) 0px, transparent 50%);
+            color: #e2e8f0; 
+        }
+
+        /* --- SISTEMA DE DISEÑO DINÁMICO (BLANCO LIMPIO / NEGRO GLASS) --- */
+        
+        /* MODO DÍA: Blanco Limpio y Cómodo */
+        .glass-ui {
+            background-color: #ffffff; /* Blanco sólido limpio */
+            border: 1px solid #e2e8f0; /* Borde slate-200 muy sutil */
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        /* MODO NOCHE: Negro Translúcido */
+        html.dark .glass-ui {
+            background-color: rgba(30, 41, 59, 0.6); /* Slate-800 translúcido */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(71, 85, 105, 0.4);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* --- EFECTO HOVER AMARILLO GLOBAL PARA TODOS LOS BOTONES --- */
+        button, a#btn-infopucp {
+            transition: all 0.3s ease !important;
+        }
+        
+        /* Hover en MODO DÍA */
+        button:hover, a#btn-infopucp:hover {
+            background-color: #fef08a !important; /* Tailwind yellow-200 */
+            color: #713f12 !important; /* Tailwind yellow-900 para alto contraste */
+            border-color: #fde047 !important; /* Tailwind yellow-300 */
+            box-shadow: 0 4px 10px rgba(250, 204, 21, 0.2) !important;
+            transform: translateY(-1px);
+        }
+        
+        /* Hover en MODO NOCHE */
+        html.dark button:hover, html.dark a#btn-infopucp:hover {
+            background-color: #facc15 !important; /* Tailwind yellow-400 */
+            color: #422006 !important; /* Tailwind yellow-950 */
+            border-color: #eab308 !important; /* Tailwind yellow-500 */
+            box-shadow: 0 4px 10px rgba(234, 179, 8, 0.2) !important;
+        }
+        /* ------------------------------------------------------------------- */
+
         .kanban-column {
             min-height: 70vh;
             border-radius: 1.5rem;
@@ -20,62 +84,33 @@
             min-width: 320px;
         }
         
-        /* INTELIGENCIA DE COLORES - MODO CLARO */
-        body { background-color: #f8fafc; color: #0f172a; transition: background-color 0.3s, color 0.3s; }
-        #col-backlog { background: linear-gradient(145deg, #f1f5f9 0%, #e2e8f0 100%); border: 1px solid #cbd5e1; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
-        #col-todo { background: linear-gradient(145deg, #fffbeb 0%, #fef3c7 100%); border: 1px solid #fde68a; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
-        #col-progress { background: linear-gradient(145deg, #eff6ff 0%, #dbeafe 100%); border: 1px solid #bfdbfe; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
-        #col-review { background: linear-gradient(145deg, #f5f3ff 0%, #ede9fe 100%); border: 1px solid #ddd6fe; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
-        #col-done { background: linear-gradient(145deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #bbf7d0; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
-        
-        /* INTELIGENCIA DE COLORES - MODO OSCURO */
-        html.dark body { background-color: #0b0f19; color: #f1f5f9; }
-        html.dark .bg-white { background-color: #161b22 !important; border-color: #1e293b !important; }
-        html.dark .text-slate-800, html.dark .text-slate-900 { color: #f8fafc !important; }
-        html.dark .text-slate-700 { color: #cbd5e1 !important; }
-        html.dark .text-slate-600 { color: #94a3b8 !important; }
-        html.dark .text-slate-500 { color: #94a3b8 !important; }
-        html.dark .text-slate-400 { color: #64748b !important; }
-        html.dark .border-slate-50, html.dark .border-slate-100, html.dark .border-slate-200 { border-color: #1e293b !important; }
-        html.dark input, html.dark select, html.dark textarea { background-color: #0b0f19 !important; color: #f8fafc !important; border-color: #1e293b !important; }
-        html.dark input:focus, html.dark select:focus, html.dark textarea:focus { border-color: #818cf8 !important; box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.2); }
-        
-        /* Columnas Modo Oscuro con mejor contraste */
-        html.dark #col-backlog { background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%); border-color: #334155; }
-        html.dark #col-todo { background: linear-gradient(145deg, #291a05 0%, #170d01 100%); border-color: #78350f; }
-        html.dark #col-progress { background: linear-gradient(145deg, #0d1e3e 0%, #061126 100%); border-color: #1e3a8a; }
-        html.dark #col-review { background: linear-gradient(145deg, #201047 0%, #110729 100%); border-color: #4c1d95; }
-        html.dark #col-done { background: linear-gradient(145deg, #042411 0%, #021308 100%); border-color: #064e3b; }
-        
-        /* Tarjetas y Animaciones */
-        .task-card { cursor: grab; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; border: 1px solid #e2e8f0; }
-        html.dark .task-card { border-color: #334155; background-color: #1e293b !important; }
+        /* Tarjetas y Animaciones (Excluyendo del hover amarillo) */
+        .task-card { cursor: grab; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .task-card:active { cursor: grabbing; transform: scale(0.98); }
-        .task-card:hover { transform: translateY(-4px); box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.15); }
-        html.dark .task-card:hover { box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.5); border-color: #475569; }
+        .task-card:hover { transform: translateY(-4px); box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.1); background-color: #f8fafc !important; }
+        html.dark .task-card:hover { box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.4); background-color: rgba(30, 41, 59, 0.8) !important; }
         
-        .drag-over { filter: brightness(1.05); transform: scale(1.02); border: 2px dashed #6366f1 !important; }
-        html.dark .drag-over { filter: brightness(1.2); border-color: #818cf8 !important; }
+        .drag-over { filter: brightness(1.1); transform: scale(1.02); border: 2px dashed #818cf8 !important; }
+        html.dark .drag-over { filter: brightness(1.3); }
 
         /* Overlays y Scrollbars */
-        .glass-overlay { background-color: rgba(15, 23, 42, 0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
-        .role-indicator { height: 4px; width: 100%; border-radius: 10px 10px 0 0; position: absolute; top: 0; left: 0; }
+        .glass-overlay { background-color: rgba(15, 23, 42, 0.5); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
         .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        html.dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
-        html.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.5); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.8); }
+        html.dark .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(71, 85, 105, 0.6); }
+        html.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(100, 116, 139, 0.8); }
     </style>
 </head>
 <body class="font-sans p-4 md:p-6 custom-scrollbar overflow-x-hidden">
 
     <!-- Cargando / Errores -->
-    <div id="loading-overlay" class="fixed inset-0 flex items-center justify-center z-[200] glass-overlay">
+    <div id="loading-overlay" class="fixed inset-0 flex items-center justify-center z-[400] glass-overlay">
         <div class="text-white text-center max-w-lg p-6 animate-pulse">
             <div id="loader-spinner" class="w-16 h-16 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin mb-4 mx-auto"></div>
             <p id="loader-text" class="font-black uppercase tracking-widest text-xs">Conectando a Firebase...</p>
-            <div id="loader-error-help" class="hidden mt-4 text-left bg-slate-800 p-6 rounded-2xl border border-slate-700 shadow-2xl">
+            <div id="loader-error-help" class="hidden mt-4 text-left glass-ui p-6 rounded-2xl">
                 <p class="text-red-400 font-black mb-3 text-sm">⚠️ ERROR DE CONEXIÓN</p>
                 <div id="detailed-error" class="mt-4 p-2 bg-black/40 rounded font-mono text-[10px] text-red-300 whitespace-pre-wrap"></div>
             </div>
@@ -83,15 +118,15 @@
     </div>
 
     <!-- Pantalla de Autenticación Rediseñada -->
-    <div id="auth-overlay" class="fixed inset-0 flex items-center justify-center p-4 z-[100] glass-overlay hidden">
-        <div class="bg-white dark:bg-slate-800 rounded-[2rem] shadow-2xl w-full max-w-xl overflow-hidden border border-slate-200 dark:border-slate-700 flex flex-col transition-all duration-300">
+    <div id="auth-overlay" class="fixed inset-0 flex items-center justify-center p-4 z-[300] glass-overlay hidden">
+        <div class="glass-ui !bg-white/80 dark:!bg-slate-800/90 rounded-[2rem] w-full max-w-xl overflow-hidden flex flex-col transition-all duration-300">
             <!-- Header Login -->
-            <div class="bg-indigo-600 dark:bg-indigo-900 p-8 text-center relative overflow-hidden">
-                <div class="absolute -top-10 -right-10 w-40 h-40 bg-indigo-500 dark:bg-indigo-800 rounded-full blur-3xl opacity-50"></div>
+            <div class="bg-indigo-600/90 dark:bg-indigo-900/90 backdrop-blur-md p-8 text-center relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-40 h-40 bg-indigo-400/50 dark:bg-indigo-700/50 rounded-full blur-3xl opacity-50"></div>
                 <div class="relative z-10">
                     <span class="text-5xl mb-4 block">📊</span>
                     <h2 class="text-3xl font-black text-white tracking-tighter uppercase">Kanban Cloud BI</h2>
-                    <p class="text-indigo-200 dark:text-indigo-300 text-sm font-medium mt-1">Gestión Colaborativa Segura</p>
+                    <p class="text-indigo-100 text-sm font-medium mt-1">Gestión Colaborativa Segura</p>
                 </div>
             </div>
 
@@ -100,8 +135,8 @@
                 <!-- VISTA 1: Lista de usuarios (Login) -->
                 <div id="login-view">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-sm font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Selecciona tu perfil</h3>
-                        <button onclick="toggleRegisterView(true)" class="text-[10px] bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-3 py-1.5 rounded-lg font-black hover:bg-indigo-100 dark:hover:bg-indigo-800 transition-all">➕ Nuevo</button>
+                        <h3 class="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-widest">Selecciona tu perfil</h3>
+                        <button onclick="toggleRegisterView(true)" class="text-[10px] glass-ui text-indigo-700 dark:text-indigo-300 px-3 py-1.5 rounded-lg font-black transition-all">➕ Nuevo</button>
                     </div>
                     <div id="auth-existing-list" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-48 overflow-y-auto custom-scrollbar p-1">
                         <!-- Generado por JS -->
@@ -110,20 +145,20 @@
 
                 <!-- VISTA 2: Registro de Usuario -->
                 <div id="register-view" class="hidden">
-                    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-200 dark:border-slate-700">
-                        <button onclick="toggleRegisterView(false)" class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors">⬅️ Volver</button>
-                        <h3 class="text-sm font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Registrar Nuevo Usuario</h3>
+                    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-200/50 dark:border-slate-600/50">
+                        <button onclick="toggleRegisterView(false)" class="text-slate-600 dark:text-slate-400 font-bold">⬅️ Volver</button>
+                        <h3 class="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-widest">Registrar Nuevo Usuario</h3>
                     </div>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-1">Nombre Completo</label>
-                            <input type="text" id="reg-name" placeholder="Ej. Juan Pérez" class="w-full bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-3 text-sm font-bold focus:border-indigo-500 dark:focus:border-indigo-400 outline-none transition-colors">
+                            <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-1">Nombre Completo</label>
+                            <input type="text" id="reg-name" placeholder="Ej. Juan Pérez" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-sm font-bold focus:border-indigo-500/50 outline-none transition-colors">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-1">Crea una clave (6 números)</label>
-                            <input type="password" id="reg-pass" placeholder="******" maxlength="6" class="w-full bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-3 text-center tracking-[0.5em] text-xl font-black focus:border-indigo-500 dark:focus:border-indigo-400 outline-none transition-colors">
+                            <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-1">Crea una clave (6 números)</label>
+                            <input type="password" id="reg-pass" placeholder="******" maxlength="6" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-center tracking-[0.5em] text-xl font-black focus:border-indigo-500/50 outline-none transition-colors">
                         </div>
-                        <button onclick="registerNewUser()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-4 rounded-xl font-black shadow-lg uppercase tracking-widest transition-all mt-4">
+                        <button onclick="registerNewUser()" class="w-full bg-emerald-500/90 text-white py-4 rounded-xl font-black shadow-lg uppercase tracking-widest mt-4 border border-emerald-400/50">
                             Crear Cuenta e Ingresar
                         </button>
                     </div>
@@ -131,18 +166,18 @@
 
                 <!-- VISTA 3: Pedir Clave (Login) -->
                 <div id="password-view" class="hidden">
-                    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-200 dark:border-slate-700">
-                        <button onclick="hidePasswordView()" class="text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition-colors">⬅️ Volver</button>
-                        <h3 class="text-sm font-black text-slate-700 dark:text-slate-300 uppercase tracking-widest">Verificación de Seguridad</h3>
+                    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-200/50 dark:border-slate-600/50">
+                        <button onclick="hidePasswordView()" class="text-slate-600 dark:text-slate-400 font-bold">⬅️ Volver</button>
+                        <h3 class="text-sm font-black text-slate-800 dark:text-slate-200 uppercase tracking-widest">Verificación de Seguridad</h3>
                     </div>
                     <div class="text-center mb-6">
-                        <div id="login-avatar" class="w-16 h-16 bg-indigo-100 dark:bg-slate-700 rounded-full mx-auto flex items-center justify-center text-xl font-black text-indigo-600 dark:text-indigo-400 mb-3 shadow-inner"></div>
-                        <p class="font-bold text-slate-800 dark:text-white" id="login-name-display"></p>
+                        <div id="login-avatar" class="w-16 h-16 glass-ui rounded-full mx-auto flex items-center justify-center text-xl font-black text-indigo-700 dark:text-indigo-300 mb-3"></div>
+                        <p class="font-black text-slate-900 dark:text-white text-lg" id="login-name-display"></p>
                     </div>
                     <div class="space-y-4">
-                        <input type="password" id="login-pass" placeholder="******" maxlength="6" class="w-full bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-4 text-center tracking-[0.5em] text-2xl font-black focus:border-indigo-500 dark:focus:border-indigo-400 outline-none transition-colors">
+                        <input type="password" id="login-pass" placeholder="******" maxlength="6" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-4 text-center tracking-[0.5em] text-2xl font-black focus:border-indigo-500/50 outline-none transition-colors">
                         <p id="password-help-msg" class="text-center text-xs font-bold text-amber-500 hidden">Actualización: Crea tu clave de 6 dígitos.</p>
-                        <button onclick="executeLogin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-xl font-black shadow-lg uppercase tracking-widest transition-all">
+                        <button onclick="executeLogin()" class="w-full bg-indigo-600/90 text-white py-4 rounded-xl font-black shadow-lg uppercase tracking-widest border border-indigo-500/50">
                             Acceder
                         </button>
                     </div>
@@ -152,28 +187,38 @@
     </div>
 
     <!-- HEADER PRINCIPAL -->
-    <header class="mb-10">
+    <!-- z-[60] mantiene el header debajo de los modales z-[200], pero encima de la tabla -->
+    <header class="mb-10 relative z-[60]">
         <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center gap-8 mb-8">
-            <div>
-                <h1 class="text-4xl font-black text-slate-800 dark:text-white tracking-tighter mb-3 flex items-center gap-3">
-                    <span class="text-indigo-600 dark:text-indigo-400">🔹 Kanban</span> 
-                    <span class="text-amber-400 italic">Proyect BI</span>
+            
+            <div class="relative z-[100]">
+                <!-- Titulo con colores suavizados -->
+                <h1 class="text-4xl font-black tracking-tighter mb-4 flex items-center gap-3">
+                    <span class="text-blue-600 dark:text-blue-400 text-3xl">◆</span> 
+                    <span class="text-blue-800 dark:text-blue-300">Kanban</span> 
+                    <span class="text-amber-500 dark:text-amber-400 italic">Proyect BI</span>
                 </h1>
+                
                 <div class="flex flex-wrap items-center gap-3">
-                    <span id="display-user" class="text-indigo-700 dark:text-indigo-300 font-black text-xs bg-indigo-100 dark:bg-indigo-900/50 px-4 py-2 rounded-full border border-indigo-200 dark:border-indigo-800 uppercase shadow-sm">Invitado</span>
+                    <!-- Botón Usuario Glass -->
+                    <span id="display-user" class="glass-ui text-slate-700 dark:text-slate-200 font-black text-xs px-5 py-2.5 rounded-full uppercase flex items-center gap-2 cursor-default">
+                        👤 Invitado
+                    </span>
                     
-                    <!-- Usuarios Conectados & Notificaciones -->
-                    <div class="flex items-center gap-2 bg-white dark:bg-slate-800 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 shadow-sm relative">
+                    <!-- Usuarios Conectados & Notificaciones Glass -->
+                    <div class="flex items-center gap-2 glass-ui px-4 py-1.5 rounded-full relative z-[110]">
                         <div id="online-users-container" class="flex -space-x-2"></div>
                         <div class="h-4 w-px bg-slate-200 dark:bg-slate-600 mx-1"></div>
+                        
                         <!-- Campana -->
                         <div class="relative cursor-pointer group" onclick="toggleNotifications()">
-                            <span class="text-sm hover:scale-110 transition-transform inline-block">🔔</span>
+                            <span class="text-lg hover:scale-110 transition-transform inline-block text-amber-500 dark:text-amber-400">🔔</span>
                             <span id="notif-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-black rounded-full h-3.5 w-3.5 flex items-center justify-center hidden shadow-md">0</span>
                         </div>
-                        <!-- Dropdown Notificaciones -->
-                        <div id="notif-dropdown" class="hidden absolute top-full mt-3 right-0 w-72 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 z-50 overflow-hidden transform origin-top-right transition-all">
-                            <div class="p-3 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+                        
+                        <!-- Dropdown Notificaciones (Z-Index superior) -->
+                        <div id="notif-dropdown" class="hidden absolute top-full mt-3 left-0 w-72 glass-ui rounded-2xl shadow-2xl z-[120] overflow-hidden transform origin-top-left transition-all">
+                            <div class="p-3 border-b border-slate-100 dark:border-slate-700/50 bg-slate-50 dark:bg-slate-900/50">
                                 <h4 class="text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase tracking-widest">Notificaciones</h4>
                             </div>
                             <div id="notif-list" class="max-h-64 overflow-y-auto custom-scrollbar p-2 space-y-1"></div>
@@ -182,114 +227,118 @@
 
                     <!-- Controles Rápidos -->
                     <div class="flex items-center gap-2 flex-wrap">
-                        <a id="btn-infopucp" href="#" target="_blank" class="bg-slate-900 dark:bg-slate-700 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase hover:bg-black dark:hover:bg-slate-600 transition-all shadow-sm">INFOPUCP 🎓</a>
-                        <button onclick="toggleDarkMode()" id="btn-dark-mode" class="bg-white dark:bg-amber-500/20 text-slate-700 dark:text-amber-400 border border-slate-200 dark:border-amber-500/30 px-4 py-2 rounded-full text-[10px] font-black uppercase hover:bg-slate-50 dark:hover:bg-amber-500/30 transition-all shadow-sm">🌙 Noche</button>
-                        <button onclick="logout()" class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 px-4 py-2 rounded-full text-[10px] font-black uppercase border border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900/40 transition-all shadow-sm">Salir 🚪</button>
+                        <a id="btn-infopucp" href="#" target="_blank" class="glass-ui text-slate-700 dark:text-slate-200 px-5 py-2.5 rounded-full text-[10px] font-black uppercase inline-block">INFOPUCP 🎓</a>
+                        <button onclick="toggleDarkMode()" id="btn-dark-mode" class="glass-ui text-amber-600 dark:text-amber-400 px-5 py-2.5 rounded-full text-[10px] font-black uppercase">🌙 MODO NOCHE</button>
+                        <button onclick="logout()" class="glass-ui text-red-600 dark:text-red-400 px-5 py-2.5 rounded-full text-[10px] font-black uppercase">SALIR 🚪</button>
                     </div>
                 </div>
             </div>
             
-            <div id="file-status-panel" class="bg-white dark:bg-slate-800 p-5 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-center gap-6 w-full xl:w-auto">
-                <div class="flex items-center gap-4">
-                    <div id="status-indicator" class="w-4 h-4 rounded-full bg-emerald-500 border-4 border-emerald-50 dark:border-emerald-900/30 shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+            <!-- Panel Derecho Glass -->
+            <div id="file-status-panel" class="glass-ui p-4 rounded-full flex flex-col sm:flex-row items-center gap-6 w-full xl:w-auto relative z-10">
+                <div class="flex items-center gap-3 pl-2">
+                    <div id="status-indicator" class="w-3.5 h-3.5 rounded-full bg-red-500 border-2 border-white/50 dark:border-slate-700"></div>
                     <div>
-                        <p class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-0.5">Archivo Maestro</p>
-                        <h4 id="status-text" class="text-xs font-black text-emerald-600 dark:text-emerald-400 uppercase">Disponible ✅</h4>
+                        <p class="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-0.5">Archivo Maestro</p>
+                        <h4 id="status-text" class="text-[11px] font-black text-red-500 dark:text-red-400 uppercase">EN USO ⛔</h4>
                     </div>
                 </div>
-                <div class="flex flex-wrap items-center gap-2 border-l-2 pl-6 border-slate-200 dark:border-slate-700">
-                    <button onclick="toggleMasterFileStatus()" class="bg-slate-800 dark:bg-slate-700 text-white px-4 py-2.5 rounded-xl hover:bg-slate-900 dark:hover:bg-slate-600 transition-all text-[10px] font-black uppercase shadow-md">🔄 Estado</button>
-                    <button onclick="openFileLinkWithInternalLog()" class="bg-indigo-600 text-white px-4 py-2.5 rounded-xl hover:bg-indigo-700 transition-all flex items-center gap-2 shadow-lg"><span class="text-[10px] font-black uppercase">📂 Abrir Drive</span></button>
-                    <button onclick="downloadAccessLogs()" class="bg-emerald-600 text-white px-4 py-2.5 rounded-xl hover:bg-emerald-700 transition-all flex items-center gap-2 shadow-lg"><span class="text-[10px] font-black uppercase">Auditoría</span></button>
-                    <button onclick="openFileEditModal()" class="bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 p-2.5 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-950 transition-colors">⚙️</button>
+                <div class="flex flex-wrap items-center gap-2 border-l-2 pl-4 border-slate-200 dark:border-slate-700/50">
+                    <button onclick="toggleMasterFileStatus()" class="text-indigo-700 bg-indigo-50 dark:bg-transparent dark:text-slate-300 px-4 py-2 rounded-xl text-[9px] font-black uppercase border border-transparent">🔄 Estado</button>
+                    <button onclick="openFileLinkWithInternalLog()" class="bg-indigo-600/90 dark:bg-indigo-500/80 text-white px-4 py-2 rounded-xl flex items-center gap-2 border border-indigo-500/50"><span class="text-[9px] font-black uppercase">📂 Abrir Drive</span></button>
+                    <button onclick="downloadAccessLogs()" class="bg-emerald-500/90 dark:bg-emerald-500/80 text-white px-4 py-2 rounded-xl flex items-center gap-2 border border-emerald-500/50"><span class="text-[9px] font-black uppercase">Auditoría</span></button>
+                    <button onclick="openFileEditModal()" class="text-slate-600 dark:text-slate-300 p-2 rounded-xl border border-transparent">⚙️</button>
                 </div>
             </div>
         </div>
 
-        <div class="flex flex-col lg:flex-row gap-4 items-center">
-            <button onclick="openModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3.5 rounded-2xl font-black shadow-lg transition-all hover:-translate-y-1 w-full lg:w-auto flex items-center justify-center gap-2">
+        <div class="flex flex-col lg:flex-row gap-4 items-center relative z-10">
+            <!-- Botón de Tarea -->
+            <button onclick="openModal()" class="bg-indigo-500/90 dark:bg-indigo-500/80 text-white px-6 py-3 rounded-2xl font-black shadow-md w-full lg:w-auto flex items-center justify-center gap-2 uppercase text-xs border border-indigo-400/50">
                 <span class="text-lg leading-none">+</span> Nueva Tarea
             </button>
-            <button onclick="openRoleModal()" class="bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 px-6 py-3.5 rounded-2xl font-black shadow-sm border border-slate-200 dark:border-slate-700 w-full lg:w-auto transition-colors">
+            <!-- Botón de Roles -->
+            <button onclick="openRoleModal()" class="glass-ui px-6 py-3 rounded-2xl font-black w-full lg:w-auto uppercase text-xs text-indigo-800 dark:text-indigo-300">
                 🛡️ Roles
             </button>
-            <div class="flex bg-slate-100 dark:bg-slate-900 p-1.5 rounded-2xl border border-slate-200 dark:border-slate-800 w-full lg:w-auto shadow-inner">
-                <button id="view-kanban" onclick="switchView('kanban')" class="flex-1 px-6 py-2 rounded-xl text-xs font-black transition-all bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow uppercase">Tablero</button>
-                <button id="view-archive" onclick="switchView('archive')" class="flex-1 px-6 py-2 rounded-xl text-xs font-black transition-all text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white uppercase">Historial</button>
+            <!-- Tablero / Historial Glass -->
+            <div class="flex glass-ui p-1.5 rounded-2xl w-full lg:w-auto">
+                <button id="view-kanban" onclick="switchView('kanban')" class="flex-1 px-6 py-2 rounded-xl text-xs font-black bg-indigo-600/90 text-white shadow uppercase border border-indigo-500/50">Tablero</button>
+                <button id="view-archive" onclick="switchView('archive')" class="flex-1 px-6 py-2 rounded-xl text-xs font-black text-slate-600 dark:text-slate-400 uppercase border border-transparent">Historial</button>
             </div>
             
-            <!-- Barra de Filtros Dinámica -->
-            <div class="bg-white dark:bg-slate-800 flex-1 p-2 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 flex items-center gap-3 overflow-x-auto custom-scrollbar w-full lg:w-auto">
+            <!-- Barra de Filtros Dinámica Glass -->
+            <div class="glass-ui flex-1 p-2 rounded-2xl flex items-center gap-3 overflow-x-auto custom-scrollbar w-full lg:w-auto cursor-default">
                 <span class="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest pl-2">🔍 Filtros:</span>
                 
-                <select id="user-filter" onchange="setAssigneeFilter(this.value)" class="bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-[10px] font-black uppercase rounded-xl px-3 py-1.5 outline-none cursor-pointer">
-                    <option value="all">👥 Todos los responsables</option>
+                <select id="user-filter" onchange="setAssigneeFilter(this.value)" class="bg-transparent text-slate-700 dark:text-slate-200 text-[10px] font-black uppercase rounded-xl px-3 py-1.5 outline-none cursor-pointer hover:text-indigo-600">
+                    <option value="all">👥 Todos</option>
                 </select>
                 
-                <div class="w-px h-6 bg-slate-200 dark:bg-slate-700 mx-1"></div>
+                <div class="w-px h-6 bg-slate-200 dark:bg-slate-600/50 mx-1"></div>
                 <div id="filter-container" class="flex gap-2 items-center"></div>
             </div>
         </div>
     </header>
 
-    <!-- KANBAN VIEW -->
-    <div id="kanban-view" class="flex gap-6 overflow-x-auto pb-8 custom-scrollbar items-start">
-        <div id="col-backlog" class="kanban-column flex-shrink-0" ondrop="drop(event, 'backlog')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
-            <h2 class="text-[11px] font-black text-slate-700 dark:text-slate-300 uppercase mb-5 px-1 flex justify-between items-center"><span>📥 Backlog</span> <span id="badge-backlog" class="bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-sm px-2.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-600">0</span></h2>
+    <!-- KANBAN VIEW (Colores alzados y sólidos en Modo Día) -->
+    <div id="kanban-view" class="flex gap-6 overflow-x-auto pb-8 custom-scrollbar items-start relative z-10">
+        <div id="col-backlog" class="kanban-column flex-shrink-0 bg-blue-50 dark:bg-slate-800/40 border border-blue-200 dark:border-slate-700/50 shadow-sm" ondrop="drop(event, 'backlog')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+            <h2 class="text-[11px] font-black text-blue-800 dark:text-slate-300 uppercase mb-5 px-1 flex justify-between items-center"><span>📥 Backlog</span> <span id="badge-backlog" class="bg-blue-600 dark:bg-slate-900 text-white shadow-sm px-2.5 py-0.5 rounded-full text-[9px]">0</span></h2>
             <div id="tasks-backlog" class="space-y-4"></div>
         </div>
-        <div id="col-todo" class="kanban-column flex-shrink-0" ondrop="drop(event, 'todo')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
-            <h2 class="text-[11px] font-black text-amber-700 dark:text-amber-400 uppercase mb-5 px-1 flex justify-between items-center"><span>📋 Por hacer</span> <span id="badge-todo" class="bg-white dark:bg-slate-800 text-amber-700 dark:text-amber-400 shadow-sm px-2.5 py-0.5 rounded-full border border-amber-200 dark:border-amber-900/50">0</span></h2>
+        <div id="col-todo" class="kanban-column flex-shrink-0 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/30 shadow-sm" ondrop="drop(event, 'todo')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+            <h2 class="text-[11px] font-black text-amber-800 dark:text-amber-500 uppercase mb-5 px-1 flex justify-between items-center"><span>📋 Por hacer</span> <span id="badge-todo" class="bg-amber-500 dark:bg-amber-900 text-white shadow-sm px-2.5 py-0.5 rounded-full text-[9px]">0</span></h2>
             <div id="tasks-todo" class="space-y-4"></div>
         </div>
-        <div id="col-progress" class="kanban-column flex-shrink-0" ondrop="drop(event, 'progress')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
-            <h2 class="text-[11px] font-black text-blue-700 dark:text-blue-400 uppercase mb-5 px-1 flex justify-between items-center"><span>🚧 En proceso</span> <span id="badge-progress" class="bg-white dark:bg-slate-800 text-blue-700 dark:text-blue-400 shadow-sm px-2.5 py-0.5 rounded-full border border-blue-200 dark:border-blue-900/50">0</span></h2>
+        <div id="col-progress" class="kanban-column flex-shrink-0 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-700/30 shadow-sm" ondrop="drop(event, 'progress')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+            <h2 class="text-[11px] font-black text-indigo-800 dark:text-indigo-400 uppercase mb-5 px-1 flex justify-between items-center"><span>🚧 En proceso</span> <span id="badge-progress" class="bg-indigo-500 dark:bg-indigo-900 text-white shadow-sm px-2.5 py-0.5 rounded-full text-[9px]">0</span></h2>
             <div id="tasks-progress" class="space-y-4"></div>
         </div>
-        <div id="col-review" class="kanban-column flex-shrink-0" ondrop="drop(event, 'review')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
-            <h2 class="text-[11px] font-black text-purple-700 dark:text-purple-400 uppercase mb-5 px-1 flex justify-between items-center"><span>👀 Revisión</span> <span id="badge-review" class="bg-white dark:bg-slate-800 text-purple-700 dark:text-purple-400 shadow-sm px-2.5 py-0.5 rounded-full border border-purple-200 dark:border-purple-900/50">0</span></h2>
+        <div id="col-review" class="kanban-column flex-shrink-0 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700/30 shadow-sm" ondrop="drop(event, 'review')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+            <h2 class="text-[11px] font-black text-purple-800 dark:text-purple-400 uppercase mb-5 px-1 flex justify-between items-center"><span>👀 Revisión</span> <span id="badge-review" class="bg-purple-500 dark:bg-purple-900 text-white shadow-sm px-2.5 py-0.5 rounded-full text-[9px]">0</span></h2>
             <div id="tasks-review" class="space-y-4"></div>
         </div>
-        <div id="col-done" class="kanban-column flex-shrink-0" ondrop="drop(event, 'done')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
-            <h2 class="text-[11px] font-black text-emerald-700 dark:text-emerald-400 uppercase mb-5 px-1 flex justify-between items-center"><span>✅ Finalizado</span> <span id="badge-done" class="bg-white dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 shadow-sm px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-900/50">0</span></h2>
+        <div id="col-done" class="kanban-column flex-shrink-0 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700/30 shadow-sm" ondrop="drop(event, 'done')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+            <h2 class="text-[11px] font-black text-emerald-800 dark:text-emerald-400 uppercase mb-5 px-1 flex justify-between items-center"><span>✅ Finalizado</span> <span id="badge-done" class="bg-emerald-500 dark:bg-emerald-900 text-white shadow-sm px-2.5 py-0.5 rounded-full text-[9px]">0</span></h2>
             <div id="tasks-done" class="space-y-4"></div>
         </div>
     </div>
 
     <!-- ARCHIVE VIEW -->
-    <div id="archive-view" class="hidden">
-        <div class="bg-white dark:bg-slate-800 p-8 md:p-12 rounded-[2rem] border border-slate-200 dark:border-slate-700 shadow-xl">
-            <h2 class="text-3xl font-black text-slate-800 dark:text-white mb-8 tracking-tighter">📦 Historial Maestro</h2>
+    <div id="archive-view" class="hidden relative z-10">
+        <div class="glass-ui p-8 md:p-12 rounded-[2rem] shadow-xl">
+            <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-8 tracking-tighter">📦 Historial Maestro</h2>
             <div id="archived-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
         </div>
     </div>
 
-    <!-- MODAL TAREAS -->
-    <div id="modal-overlay" class="fixed inset-0 hidden flex items-center justify-center p-4 z-50 glass-overlay">
-        <div class="bg-white dark:bg-slate-800 rounded-[2rem] shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col md:flex-row h-[90vh] border border-slate-200 dark:border-slate-700">
-            <div class="p-8 border-r border-slate-200 dark:border-slate-700 flex-1 overflow-y-auto custom-scrollbar">
-                <h3 id="modal-title" class="text-2xl font-black text-slate-800 dark:text-white mb-8 tracking-tighter uppercase">Detalle de Actividad</h3>
+    <!-- MODAL TAREAS (Z-index elevado a 200) -->
+    <div id="modal-overlay" class="fixed inset-0 hidden flex items-center justify-center p-4 z-[200] glass-overlay">
+        <div class="glass-ui !bg-white/95 dark:!bg-slate-800/90 rounded-[2rem] shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col md:flex-row h-[90vh]">
+            <div class="p-8 border-r border-slate-200 dark:border-slate-700/50 flex-1 overflow-y-auto custom-scrollbar cursor-default">
+                <h3 id="modal-title" class="text-2xl font-black text-slate-900 dark:text-white mb-8 tracking-tighter uppercase">Detalle de Actividad</h3>
                 <form id="task-form" class="space-y-5">
                     <input type="hidden" id="edit-id">
                     <div>
-                        <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-2">Actividad 📝</label>
-                        <input type="text" id="task-title" required class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-4 text-sm font-bold outline-none focus:bg-white dark:focus:bg-slate-800 focus:border-indigo-500 dark:focus:border-amber-400 transition-colors">
+                        <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-2">Actividad 📝</label>
+                        <input type="text" id="task-title" required class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-4 text-sm font-bold outline-none focus:border-indigo-500/50 transition-colors">
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-2">Responsable 👤</label>
-                            <input type="text" id="task-assignee" list="assignee-suggestions" class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-3.5 text-sm font-bold outline-none focus:border-indigo-500 dark:focus:border-amber-400 transition-colors">
+                            <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-2">Responsable 👤</label>
+                            <input type="text" id="task-assignee" list="assignee-suggestions" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3.5 text-sm font-bold outline-none focus:border-indigo-500/50 transition-colors">
                             <datalist id="assignee-suggestions"></datalist>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-2">Especialidad 🛠️</label>
-                            <select id="task-role" class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-3.5 text-sm font-bold outline-none focus:border-indigo-500 dark:focus:border-amber-400 cursor-pointer transition-colors"></select>
+                            <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-2">Especialidad 🛠️</label>
+                            <select id="task-role" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3.5 text-sm font-bold outline-none focus:border-indigo-500/50 cursor-pointer transition-colors"></select>
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-2">Estado 📌</label>
-                            <select id="task-status" class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 text-indigo-600 dark:text-amber-400 rounded-xl p-3.5 text-sm font-bold outline-none focus:border-indigo-500 dark:focus:border-amber-400 cursor-pointer transition-colors">
+                            <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-2">Estado 📌</label>
+                            <select id="task-status" class="w-full glass-ui text-indigo-700 dark:text-amber-400 rounded-xl p-3.5 text-sm font-bold outline-none focus:border-indigo-500/50 cursor-pointer transition-colors">
                                 <option value="backlog">📥 Backlog</option>
                                 <option value="todo">📋 Por hacer</option>
                                 <option value="progress">🚧 En proceso</option>
@@ -298,122 +347,117 @@
                                 <option value="archived">📦 Archivado</option>
                             </select>
                         </div>
-                        <div><label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-2">Inicio 📅</label><input type="date" id="task-date-start" class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-3.5 text-sm outline-none focus:border-indigo-500 dark:focus:border-amber-400 transition-colors"></div>
-                        <div><label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-2">Fin 📅</label><input type="date" id="task-date-end" class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-3.5 text-sm outline-none focus:border-indigo-500 dark:focus:border-amber-400 transition-colors"></div>
+                        <div><label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-2">Inicio 📅</label><input type="date" id="task-date-start" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3.5 text-sm outline-none focus:border-indigo-500/50 transition-colors"></div>
+                        <div><label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-2">Fin 📅</label><input type="date" id="task-date-end" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3.5 text-sm outline-none focus:border-indigo-500/50 transition-colors"></div>
                     </div>
                     <div>
-                        <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-2">Etiquetas ✨ <span class="text-[8px] italic text-indigo-500 dark:text-amber-500">(Sepáralas por comas)</span></label>
-                        <input type="text" id="task-labels" list="label-suggestions" placeholder="Ej. #Dashboard, #DAX" class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-3.5 text-sm outline-none focus:border-indigo-500 dark:focus:border-amber-400 transition-colors">
+                        <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-2">Etiquetas ✨ <span class="text-[8px] italic text-indigo-500 dark:text-amber-500">(Sepáralas por comas)</span></label>
+                        <input type="text" id="task-labels" list="label-suggestions" placeholder="Ej. #Dashboard, #DAX" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3.5 text-sm outline-none focus:border-indigo-500/50 transition-colors">
                         <datalist id="label-suggestions"></datalist>
                     </div>
-                    <div><label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-2">Link Drive 🔗</label><input type="url" id="task-link" placeholder="https://..." class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-3.5 text-sm outline-none focus:border-indigo-500 dark:focus:border-amber-400 transition-colors"></div>
+                    <div><label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-2">Link Drive 🔗</label><input type="url" id="task-link" placeholder="https://..." class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3.5 text-sm outline-none focus:border-indigo-500/50 transition-colors"></div>
                     
-                    <div class="flex flex-wrap justify-between items-center gap-4 mt-10 pt-6 border-t border-slate-200 dark:border-slate-700">
-                        <button type="button" id="btn-delete-task" onclick="deleteCurrentTask()" class="px-5 py-2 text-xs font-black text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 uppercase transition-colors">🗑️ Eliminar</button>
+                    <div class="flex flex-wrap justify-between items-center gap-4 mt-10 pt-6 border-t border-slate-200 dark:border-slate-700/50">
+                        <button type="button" id="btn-delete-task" onclick="deleteCurrentTask()" class="px-5 py-2 text-xs font-black text-red-600 uppercase">🗑️ Eliminar</button>
                         <div class="flex gap-3">
-                            <button type="button" id="btn-archive-task" onclick="archiveCurrentTask()" class="px-5 py-2 text-xs font-black text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white uppercase transition-colors">📦 Archivar</button>
-                            <button type="button" onclick="closeModal()" class="px-6 py-3 text-xs font-black text-slate-600 dark:text-slate-300 uppercase hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-colors">Cerrar</button>
-                            <button type="submit" class="bg-indigo-600 text-white py-3 px-8 rounded-xl text-xs font-black shadow-lg hover:bg-indigo-700 transition-all hover:-translate-y-0.5">Guardar Cambios</button>
+                            <button type="button" id="btn-archive-task" onclick="archiveCurrentTask()" class="px-5 py-2 text-xs font-black text-slate-600 dark:text-slate-400 uppercase">📦 Archivar</button>
+                            <button type="button" onclick="closeModal()" class="px-6 py-3 text-xs font-black text-slate-700 dark:text-slate-300 uppercase glass-ui rounded-xl border border-transparent">Cerrar</button>
+                            <button type="submit" class="bg-indigo-600/90 text-white py-3 px-8 rounded-xl text-xs font-black shadow-lg border border-indigo-500/50">Guardar Cambios</button>
                         </div>
                     </div>
                 </form>
             </div>
             
-            <!-- Zona de Comentarios y Menciones -->
-            <div id="comments-section" class="w-full md:w-80 bg-slate-50 dark:bg-slate-900 p-8 flex flex-col border-l border-slate-200 dark:border-slate-700 relative">
-                <h4 class="text-xs font-black text-slate-500 dark:text-slate-400 uppercase mb-6 tracking-widest flex items-center gap-2"><span class="text-lg">💬</span> Notas</h4>
+            <div id="comments-section" class="w-full md:w-80 bg-slate-50/50 dark:bg-slate-900/50 backdrop-blur-md p-8 flex flex-col border-l border-slate-200 dark:border-slate-700/50 relative">
+                <h4 class="text-xs font-black text-slate-600 dark:text-slate-400 uppercase mb-6 tracking-widest flex items-center gap-2"><span class="text-lg">💬</span> Notas</h4>
                 <div id="comments-list" class="flex-1 overflow-y-auto space-y-4 mb-6 text-xs custom-scrollbar pr-2"></div>
                 
                 <div class="space-y-3 relative">
-                    <p class="text-[10px] text-slate-500 dark:text-slate-400 italic">Menciona usando <span class="font-bold text-indigo-600 dark:text-amber-500">@usuario</span></p>
+                    <p class="text-[10px] text-slate-600 dark:text-slate-400 italic">Menciona usando <span class="font-bold text-indigo-700 dark:text-amber-500">@usuario</span></p>
                     
-                    <!-- Autocomplete Mentions Dropdown -->
-                    <div id="mention-dropdown" class="absolute hidden bottom-full mb-2 left-0 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 shadow-2xl rounded-xl max-h-40 overflow-y-auto z-[60] custom-scrollbar">
+                    <div id="mention-dropdown" class="absolute hidden bottom-full mb-2 left-0 w-full glass-ui shadow-2xl rounded-xl max-h-40 overflow-y-auto z-[60] custom-scrollbar cursor-pointer">
                         <!-- Generado por JS -->
                     </div>
 
-                    <textarea id="comment-input" placeholder="Añadir nota o validación..." class="w-full bg-white dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-xl p-4 text-xs outline-none h-24 resize-none focus:border-indigo-500 dark:focus:border-amber-400 transition-colors"></textarea>
-                    <button onclick="addComment()" class="w-full bg-slate-800 dark:bg-indigo-600 text-white py-3 rounded-xl text-[10px] font-black uppercase shadow-md hover:bg-slate-900 dark:hover:bg-indigo-500 transition-all">Publicar Nota</button>
+                    <textarea id="comment-input" placeholder="Añadir nota o validación..." class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-4 text-xs outline-none h-24 resize-none focus:border-indigo-500/50 transition-colors"></textarea>
+                    <button onclick="addComment()" class="w-full bg-slate-900/90 dark:bg-indigo-600/90 text-white py-3 rounded-xl text-[10px] font-black uppercase shadow-md border border-slate-700 dark:border-indigo-500/50">Publicar Nota</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL CONFIGURACIÓN LINKS Y EQUIPO -->
-    <div id="file-modal-overlay" class="fixed inset-0 hidden flex items-center justify-center p-4 z-[55] glass-overlay">
-        <div class="bg-white dark:bg-slate-800 rounded-[2rem] shadow-2xl w-full max-w-xl p-10 overflow-y-auto max-h-[90vh] custom-scrollbar border border-slate-200 dark:border-slate-700">
-            <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-6">Configuración de Proyecto</h3>
-            
+    <!-- MODAL CONFIGURACIÓN LINKS Y EQUIPO (Z-index 200) -->
+    <div id="file-modal-overlay" class="fixed inset-0 hidden flex items-center justify-center p-4 z-[200] glass-overlay">
+        <div class="glass-ui !bg-white/95 dark:!bg-slate-800/90 rounded-[2rem] shadow-2xl w-full max-w-xl p-10 overflow-y-auto max-h-[90vh] custom-scrollbar cursor-default">
+            <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-6">Configuración de Proyecto</h3>
             <div class="space-y-8">
-                <div class="bg-slate-50 dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-700">
-                    <h4 class="text-[10px] font-black text-indigo-600 dark:text-amber-400 uppercase mb-4 tracking-widest">Accesos Rápidos</h4>
+                <div class="bg-slate-50/50 dark:bg-slate-900/50 backdrop-blur-sm p-6 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                    <h4 class="text-[10px] font-black text-indigo-700 dark:text-amber-400 uppercase mb-4 tracking-widest">Accesos Rápidos</h4>
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-1">Carpeta Drive 📂</label>
-                            <input type="url" id="edit-drive-link" class="w-full bg-white dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-3 text-xs font-bold outline-none focus:border-indigo-500 dark:focus:border-amber-400">
+                            <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-1">Carpeta Drive 📂</label>
+                            <input type="url" id="edit-drive-link" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-xs font-bold outline-none focus:border-indigo-500/50">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase mb-1">Enlace INFOPUCP 🎓</label>
-                            <input type="url" id="edit-pucp-link" class="w-full bg-white dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-3 text-xs font-bold outline-none focus:border-indigo-500 dark:focus:border-amber-400">
+                            <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-1">Enlace INFOPUCP 🎓</label>
+                            <input type="url" id="edit-pucp-link" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-xs font-bold outline-none focus:border-indigo-500/50">
                         </div>
                     </div>
                 </div>
-
-                <div class="pt-6 border-t border-slate-200 dark:border-slate-700">
-                    <h4 class="text-[10px] font-black text-indigo-600 dark:text-amber-400 uppercase mb-4 tracking-widest">Gestión del Equipo 👤</h4>
+                <div class="pt-6 border-t border-slate-200 dark:border-slate-700/50">
+                    <h4 class="text-[10px] font-black text-indigo-700 dark:text-amber-400 uppercase mb-4 tracking-widest">Gestión del Equipo 👤</h4>
                     <div id="team-list" class="space-y-2 mb-4 grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
                 </div>
             </div>
-
-            <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
-                <button onclick="closeFileEditModal()" class="px-6 py-3 text-xs font-black text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-xl transition-all uppercase">Cerrar</button>
-                <button onclick="saveConfigLinks()" class="bg-indigo-600 text-white px-8 py-3 rounded-xl text-xs font-black shadow-lg hover:bg-indigo-700 transition-all uppercase">Guardar Cambios</button>
+            <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-slate-200 dark:border-slate-700/50">
+                <button onclick="closeFileEditModal()" class="px-6 py-3 text-xs font-black text-slate-700 dark:text-slate-400 glass-ui rounded-xl uppercase">Cerrar</button>
+                <button onclick="saveConfigLinks()" class="bg-indigo-600/90 text-white px-8 py-3 rounded-xl text-xs font-black shadow-lg uppercase border border-indigo-500/50">Guardar Cambios</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL ROLES -->
-    <div id="role-modal-overlay" class="fixed inset-0 hidden flex items-center justify-center p-4 z-[55] glass-overlay">
-        <div class="bg-white dark:bg-slate-800 rounded-[2rem] shadow-2xl w-full max-w-md p-10 border border-slate-200 dark:border-slate-700">
-            <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-6">Roles 🛡️</h3>
+    <!-- MODAL ROLES (Z-index 200) -->
+    <div id="role-modal-overlay" class="fixed inset-0 hidden flex items-center justify-center p-4 z-[200] glass-overlay">
+        <div class="glass-ui !bg-white/95 dark:!bg-slate-800/90 rounded-[2rem] shadow-2xl w-full max-w-md p-10 cursor-default">
+            <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-6">Roles 🛡️</h3>
             <div id="role-manager-list" class="space-y-2 mb-8 max-h-52 overflow-y-auto custom-scrollbar pr-2"></div>
-            <div class="bg-slate-50 dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
-                <h4 class="text-[10px] font-black text-slate-500 uppercase mb-2">Crear Nuevo Rol</h4>
+            <div class="bg-slate-50/50 dark:bg-slate-900/50 backdrop-blur-sm p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50 space-y-3">
+                <h4 class="text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-2">Crear Nuevo Rol</h4>
                 <div class="flex gap-2">
-                    <input type="text" id="new-role-name" placeholder="Nombre (Ej. DAX)" class="flex-1 bg-white dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-3 text-xs font-bold outline-none focus:border-indigo-500 dark:focus:border-amber-400">
-                    <input type="text" id="new-role-emoji" placeholder="🚀" class="w-14 bg-white dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-3 text-center focus:border-indigo-500 dark:focus:border-amber-400">
+                    <input type="text" id="new-role-name" placeholder="Nombre (Ej. DAX)" class="flex-1 glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-xs font-bold outline-none focus:border-indigo-500/50">
+                    <input type="text" id="new-role-emoji" placeholder="🚀" class="w-14 glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-center focus:border-indigo-500/50">
                 </div>
                 <div class="flex gap-2 items-center">
-                    <input type="color" id="new-role-color" value="#6366f1" class="w-12 h-12 bg-white dark:bg-slate-950 border-2 border-slate-200 dark:border-slate-700 rounded-xl cursor-pointer p-0">
-                    <button onclick="addNewRole()" class="flex-1 bg-indigo-600 text-white py-3 rounded-xl text-[10px] font-black uppercase shadow-md hover:bg-indigo-700 transition-all">Agregar Rol</button>
+                    <input type="color" id="new-role-color" value="#6366f1" class="w-12 h-12 glass-ui rounded-xl cursor-pointer p-0 border-0 outline-none">
+                    <button onclick="addNewRole()" class="flex-1 bg-indigo-600/90 text-white py-3 rounded-xl text-[10px] font-black uppercase shadow-md border border-indigo-500/50">Agregar Rol</button>
                 </div>
             </div>
-            <button onclick="closeRoleModal()" class="w-full mt-6 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 py-4 rounded-xl text-[10px] font-black uppercase hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">Cerrar Ventana</button>
+            <button onclick="closeRoleModal()" class="w-full mt-6 glass-ui text-slate-800 dark:text-slate-300 py-4 rounded-xl text-[10px] font-black uppercase">Cerrar Ventana</button>
         </div>
     </div>
 
-    <!-- MODAL VALIDACIÓN -->
-    <div id="validation-modal-overlay" class="fixed inset-0 hidden flex items-center justify-center p-4 z-[65] glass-overlay">
-        <div class="bg-white dark:bg-slate-800 rounded-[2rem] shadow-2xl p-8 max-w-sm w-full border border-slate-200 dark:border-slate-700 text-center">
-            <h4 id="validation-title" class="text-2xl font-black text-slate-800 dark:text-slate-100 mb-4 tracking-tighter">Detalle</h4>
-            <p class="text-xs text-slate-500 dark:text-slate-400 mb-6">Por favor explica el motivo de tu validación para el equipo.</p>
+    <!-- MODAL VALIDACIÓN (Z-index 210) -->
+    <div id="validation-modal-overlay" class="fixed inset-0 hidden flex items-center justify-center p-4 z-[210] glass-overlay">
+        <div class="glass-ui !bg-white/95 dark:!bg-slate-800/90 rounded-[2rem] shadow-2xl p-8 max-w-sm w-full text-center cursor-default">
+            <h4 id="validation-title" class="text-2xl font-black text-slate-900 dark:text-slate-100 mb-4 tracking-tighter">Detalle</h4>
+            <p class="text-xs text-slate-600 dark:text-slate-400 mb-6">Por favor explica el motivo de tu validación para el equipo.</p>
             <input type="hidden" id="validation-task-id">
             <input type="hidden" id="validation-type">
-            <textarea id="validation-detail" placeholder="Escribe el motivo aquí..." class="w-full bg-slate-50 dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-100 rounded-xl p-4 text-sm font-bold outline-none h-32 resize-none focus:bg-white dark:focus:bg-slate-800 focus:border-indigo-500 dark:focus:border-amber-400 mb-6"></textarea>
+            <textarea id="validation-detail" placeholder="Escribe el motivo aquí..." class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-4 text-sm font-bold outline-none h-32 resize-none focus:border-indigo-500/50 mb-6"></textarea>
             <div class="flex gap-3">
-                <button onclick="window.closeValidationModal()" class="flex-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 py-3 rounded-xl text-[10px] font-black uppercase hover:bg-slate-200 dark:hover:bg-slate-600 transition-all">Cancelar</button>
-                <button onclick="window.submitValidation()" class="flex-1 bg-indigo-600 text-white py-3 rounded-xl text-[10px] font-black uppercase shadow-lg hover:bg-indigo-700 transition-all">Guardar</button>
+                <button onclick="window.closeValidationModal()" class="flex-1 glass-ui text-slate-800 dark:text-slate-300 py-3 rounded-xl text-[10px] font-black uppercase">Cancelar</button>
+                <button onclick="window.submitValidation()" class="flex-1 bg-indigo-600/90 text-white py-3 rounded-xl text-[10px] font-black uppercase shadow-lg border border-indigo-500/50">Guardar</button>
             </div>
         </div>
     </div>
 
-    <!-- SISTEMA DE ALERTAS -->
-    <div id="alert-overlay" class="fixed inset-0 hidden flex items-center justify-center p-4 z-[60] glass-overlay">
-        <div class="bg-white dark:bg-slate-800 rounded-[2rem] shadow-2xl p-10 max-w-sm text-center border-t-[8px] border-red-500 relative overflow-hidden">
-            <div class="w-20 h-20 bg-red-50 dark:bg-red-900/30 text-red-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-4 border border-red-100 dark:border-red-800/50">⚠️</div>
-            <h4 class="text-2xl font-black text-slate-800 dark:text-white mb-2">Aviso del Sistema</h4>
-            <p id="alert-message" class="text-slate-600 dark:text-slate-400 text-sm mb-8 leading-relaxed font-medium"></p>
-            <button onclick="closeAlert()" class="w-full bg-slate-900 dark:bg-white dark:text-slate-900 text-white py-4 rounded-xl font-black uppercase shadow-lg hover:bg-slate-800 transition-all">Entendido</button>
+    <!-- SISTEMA DE ALERTAS (Z-index 220) -->
+    <div id="alert-overlay" class="fixed inset-0 hidden flex items-center justify-center p-4 z-[220] glass-overlay">
+        <div class="glass-ui !bg-white/95 dark:!bg-slate-800/95 rounded-[2rem] shadow-2xl p-10 max-w-sm text-center border-t-[8px] border-red-500 relative overflow-hidden cursor-default">
+            <div class="w-20 h-20 bg-red-100/50 dark:bg-red-900/30 backdrop-blur-sm text-red-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-4 border border-red-200/50 dark:border-red-800/50">⚠️</div>
+            <h4 class="text-2xl font-black text-slate-900 dark:text-white mb-2">Aviso del Sistema</h4>
+            <p id="alert-message" class="text-slate-700 dark:text-slate-300 text-sm mb-8 leading-relaxed font-medium"></p>
+            <button onclick="closeAlert()" class="w-full bg-slate-900/90 dark:bg-slate-700/90 text-white py-4 rounded-xl font-black uppercase shadow-lg border border-slate-700 dark:border-slate-600">Entendido</button>
         </div>
     </div>
 
@@ -459,7 +503,7 @@
             const btn = document.getElementById('btn-dark-mode');
             if (btn) {
                 const isDark = document.documentElement.classList.contains('dark');
-                btn.innerHTML = isDark ? '☀️ Modo Día' : '🌙 Modo Noche';
+                btn.innerHTML = isDark ? '☀️ MODO DÍA' : '🌙 MODO NOCHE';
             }
         }
         document.addEventListener('DOMContentLoaded', updateDarkModeButton);
@@ -489,13 +533,13 @@
                 }
             };
             
-            updatePresence(); // Primera ejecución
-            heartbeatInterval = setInterval(updatePresence, 30000); // Cada 30 segundos
+            updatePresence();
+            heartbeatInterval = setInterval(updatePresence, 30000);
         }
 
         window.isUserOnline = (u) => {
             const now = Date.now();
-            return u.isOnline && (now - (u.lastActive || 0) < 120000); // Se considera offline si lleva 2 minutos sin latido
+            return u.isOnline && (now - (u.lastActive || 0) < 120000);
         };
 
         window.logout = async () => {
@@ -510,7 +554,6 @@
             currentUser = null;
             localStorage.removeItem('bi_kanban_user');
             
-            // Recargar la página es la manera más segura de limpiar todos los listeners y memoria
             window.location.reload();
         };
 
@@ -520,9 +563,9 @@
             const ind = document.getElementById('status-indicator');
             const txt = document.getElementById('status-text');
             if(!ind || !txt) return;
-            ind.className = `w-4 h-4 rounded-full border-4 ${config.available ? 'bg-emerald-500 border-emerald-50 dark:border-emerald-900/50 shadow-[0_0_10px_rgba(16,185,129,0.5)]' : 'bg-red-500 border-red-50 dark:border-red-900/50'}`;
-            txt.innerText = config.available ? 'Disponible ✅' : 'En Uso ⛔';
-            txt.className = `text-xs font-black uppercase ${config.available ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`;
+            ind.className = `w-3.5 h-3.5 rounded-full border-2 border-white/50 dark:border-slate-700 ${config.available ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]' : 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)]'}`;
+            txt.innerText = config.available ? 'DISPONIBLE ✅' : 'EN USO ⛔';
+            txt.className = `text-[11px] font-black uppercase ${config.available ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-500'}`;
         }
 
         window.renderOnlineUsers = () => {
@@ -532,8 +575,8 @@
             const online = registeredUsers.filter(u => window.isUserOnline(u));
             container.innerHTML = online.map(u => {
                 const initials = u.name.substring(0, 2).toUpperCase();
-                return `<div class="w-8 h-8 rounded-full bg-indigo-500 dark:bg-amber-500 text-white dark:text-slate-900 flex items-center justify-center text-[10px] font-black border-2 border-white dark:border-slate-800 shadow-sm z-10" title="${u.name} (En línea)">${initials}</div>`;
-            }).join('') || `<span class="text-[10px] text-slate-500 dark:text-slate-400 px-2 font-bold italic">Solo tú</span>`;
+                return `<div class="w-8 h-8 rounded-full bg-indigo-600/90 dark:bg-amber-500/90 backdrop-blur-sm text-white dark:text-slate-900 flex items-center justify-center text-[10px] font-black border-2 border-white/50 dark:border-slate-700/50 shadow-sm z-10 cursor-default" title="${u.name} (En línea)">${initials}</div>`;
+            }).join('') || `<span class="text-[10px] text-slate-500 px-2 font-bold italic">Solo tú</span>`;
         };
 
         window.updateNotificationsUI = (notifs) => {
@@ -553,8 +596,8 @@
                 list.innerHTML = `<p class="text-center text-[10px] text-slate-500 dark:text-slate-400 py-6 font-bold italic">No tienes notificaciones nuevas.</p>`;
             } else {
                 list.innerHTML = unread.map(n => `
-                    <div onclick="window.openNotification('${n.taskId}', '${n.id}')" class="p-3 bg-indigo-50 dark:bg-slate-700/50 hover:bg-indigo-100 dark:hover:bg-slate-600 rounded-xl cursor-pointer transition-all mb-1 border border-indigo-100 dark:border-slate-600">
-                        <p class="text-[10px] text-slate-800 dark:text-slate-300"><span class="font-black text-indigo-600 dark:text-amber-400">@${n.from}</span> te mencionó en:</p>
+                    <div onclick="window.openNotification('${n.taskId}', '${n.id}')" class="p-3 bg-slate-100 dark:bg-slate-700/50 backdrop-blur-sm hover:bg-slate-200 dark:hover:bg-slate-600/50 rounded-xl cursor-pointer transition-all mb-1 border border-slate-200 dark:border-slate-600/50">
+                        <p class="text-[10px] text-slate-800 dark:text-slate-300"><span class="font-black text-indigo-700 dark:text-amber-400">@${n.from}</span> te mencionó en:</p>
                         <p class="text-xs font-bold text-slate-900 dark:text-white truncate mt-0.5">${n.taskTitle}</p>
                     </div>
                 `).join('');
@@ -579,9 +622,9 @@
             const list = document.getElementById('role-manager-list');
             if(!list) return;
             list.innerHTML = roles.map(r => `
-                <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
-                    <span class="text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase flex items-center gap-2"><span class="w-3 h-3 rounded-full inline-block" style="background:${r.color}"></span> ${r.emoji} ${r.name}</span>
-                    <button onclick="window.deleteRole('${r.id}')" class="text-slate-400 hover:text-red-500 transition-colors">🗑️</button>
+                <div class="flex items-center justify-between glass-ui p-3 rounded-xl mb-2 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                    <span class="text-[10px] font-black text-slate-800 dark:text-slate-300 uppercase flex items-center gap-2"><span class="w-3 h-3 rounded-full inline-block" style="background:${r.color}"></span> ${r.emoji} ${r.name}</span>
+                    <button type="button" data-id="${r.id}" onclick="window.deleteRole(this.dataset.id)" class="text-slate-500 hover:text-red-600 transition-colors rounded-full w-8 h-8 flex items-center justify-center bg-transparent border-0 hover:bg-red-50 dark:hover:bg-red-900/30">🗑️</button>
                 </div>
             `).join('');
         }
@@ -592,11 +635,11 @@
             list.innerHTML = registeredUsers.map(u => {
                 const isOnline = window.isUserOnline(u);
                 return `
-                <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-900 p-3 rounded-xl border border-slate-200 dark:border-slate-700">
-                    <span class="text-[10px] font-bold text-slate-700 dark:text-slate-300 uppercase">👤 ${u.name} ${isOnline ? '<span class="text-emerald-500 ml-1 text-xs">●</span>' : ''}</span>
-                    <button onclick="window.deleteUser('${u.id}')" class="text-slate-400 hover:text-red-500 transition-colors">🗑️</button>
+                <div class="flex items-center justify-between glass-ui p-3 rounded-xl">
+                    <span class="text-[10px] font-bold text-slate-800 dark:text-slate-300 uppercase">👤 ${u.name} ${isOnline ? '<span class="text-emerald-500 ml-1 text-xs">●</span>' : ''}</span>
+                    <button onclick="window.deleteUser('${u.id}')" class="text-slate-500 hover:text-red-600 transition-colors">🗑️</button>
                 </div>`;
-            }).join('') || '<p class="text-[9px] text-slate-400 italic col-span-2">No hay responsables registrados</p>';
+            }).join('') || '<p class="text-[9px] text-slate-500 italic col-span-2">No hay responsables registrados</p>';
         }
 
         function updateRoleSelects() {
@@ -614,7 +657,7 @@
             
             const userFilter = document.getElementById('user-filter');
             if(userFilter) {
-                let html = `<option value="all">👥 Todos los responsables</option>`;
+                let html = `<option value="all">👥 Todos</option>`;
                 assignees.forEach(a => {
                     html += `<option value="${a}" ${currentAssigneeFilter === a ? 'selected' : ''}>👤 ${a}</option>`;
                 });
@@ -625,9 +668,13 @@
         function updateFilterUI(labels) {
             const container = document.getElementById('filter-container');
             if(!container) return;
-            container.innerHTML = `<button onclick="window.setFilter('all')" class="px-4 py-1.5 rounded-xl text-[9px] font-black ${currentFilter === 'all' ? 'bg-indigo-600 dark:bg-amber-500 text-white shadow-sm' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'} uppercase transition-all">Todas</button>`;
+            
+            const activeClass = 'bg-amber-400/90 text-slate-900 shadow-sm border border-amber-300/50';
+            const inactiveClass = 'glass-ui text-slate-700 dark:text-slate-300';
+
+            container.innerHTML = `<button onclick="window.setFilter('all')" class="px-4 py-1.5 rounded-xl text-[9px] font-black ${currentFilter === 'all' ? activeClass : inactiveClass} uppercase transition-all">Todas</button>`;
             labels.forEach(l => {
-                container.innerHTML += `<button onclick="window.setFilter('${l}')" class="px-4 py-1.5 rounded-xl text-[9px] font-black ${currentFilter === l ? 'bg-indigo-600 dark:bg-amber-500 text-white shadow-sm' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600'} uppercase transition-all">${l}</button>`;
+                container.innerHTML += `<button onclick="window.setFilter('${l}')" class="px-4 py-1.5 rounded-xl text-[9px] font-black ${currentFilter === l ? activeClass : inactiveClass} uppercase transition-all">${l}</button>`;
             });
         }
 
@@ -639,13 +686,13 @@
         function renderComments(comments) {
             const list = document.getElementById('comments-list');
             if(!list) return;
-            list.innerHTML = comments.length ? '' : '<p class="text-slate-400 dark:text-slate-500 italic text-center py-8 text-[9px] uppercase font-bold">Sin notas colaborativas</p>';
+            list.innerHTML = comments.length ? '' : '<p class="text-slate-500 dark:text-slate-500 italic text-center py-8 text-[9px] uppercase font-bold">Sin notas colaborativas</p>';
             comments.forEach(c => {
-                const formattedText = c.text.replace(/@\w+/g, match => `<span class="text-indigo-600 dark:text-amber-400 font-black">${match}</span>`);
+                const formattedText = c.text.replace(/@\w+/g, match => `<span class="text-indigo-700 dark:text-amber-400 font-black">${match}</span>`);
                 list.innerHTML += `
-                    <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm mb-3">
-                        <p class="font-black text-indigo-600 dark:text-amber-500 text-[9px] uppercase mb-1">${c.user} <span class="text-slate-400 font-normal text-[8px] ml-2 lowercase tracking-normal">${c.date}</span></p>
-                        <p class="text-slate-700 dark:text-slate-300 text-xs leading-relaxed whitespace-pre-wrap">${formattedText}</p>
+                    <div class="glass-ui p-4 rounded-2xl mb-3">
+                        <p class="font-black text-indigo-700 dark:text-amber-500 text-[9px] uppercase mb-1">${c.user} <span class="text-slate-500 font-normal text-[8px] ml-2 lowercase tracking-normal">${c.date}</span></p>
+                        <p class="text-slate-800 dark:text-slate-200 text-xs leading-relaxed whitespace-pre-wrap">${formattedText}</p>
                     </div>`;
             });
             list.scrollTop = list.scrollHeight;
@@ -679,36 +726,38 @@
                 colTasks.forEach(task => {
                     const role = roles.find(r => r.id === task.role) || {color:'#ccc', emoji:'❓'};
                     const card = document.createElement('div');
-                    card.className = `task-card bg-white p-5 rounded-[1.25rem] shadow-sm relative overflow-hidden`;
+                    
+                    // Tarjetas no son "buttons", su hover no será amarillo, pero sí interactivo
+                    card.className = `task-card glass-ui p-5 rounded-[1.25rem] relative overflow-hidden`;
                     card.draggable = true;
                     card.id = `task-${task.id}`;
                     card.ondragstart = (e) => e.dataTransfer.setData("taskId", task.id);
                     card.onclick = () => window.editTask(task.id);
                     
-                    const tags = (task.labels || []).map(l => `<span class="text-[8px] font-black text-slate-600 dark:text-slate-300 mr-1 border border-slate-200 dark:border-slate-600 px-2 py-0.5 rounded-md uppercase bg-slate-50 dark:bg-slate-800/50">${l}</span>`).join('');
+                    const tags = (task.labels || []).map(l => `<span class="text-[8px] font-black text-slate-700 dark:text-slate-200 mr-1 bg-slate-100 dark:bg-slate-700/50 backdrop-blur-sm px-2 py-1 rounded-md uppercase border border-slate-200 dark:border-slate-600/30 cursor-default">${l}</span>`).join('');
                     
-                    const driveButton = task.link ? `<button onclick="event.stopPropagation(); window.open('${task.link}', '_blank')" class="mt-4 w-full py-2 bg-indigo-50 dark:bg-slate-700 hover:bg-indigo-600 dark:hover:bg-amber-500 hover:text-white text-indigo-600 dark:text-amber-400 text-[9px] font-black rounded-xl border border-indigo-100 dark:border-slate-600 transition-colors uppercase shadow-sm">📂 Abrir Drive</button>` : '';
+                    const driveButton = task.link ? `<button type="button" onclick="event.stopPropagation(); window.open('${task.link}', '_blank')" class="mt-4 w-full py-2.5 bg-slate-50 dark:bg-slate-700/50 text-slate-800 dark:text-white text-[9px] font-black rounded-xl border border-slate-200 dark:border-slate-600/50 uppercase shadow-sm flex items-center justify-center gap-2">📂 Abrir Drive</button>` : '';
 
                     let validationButtons = '';
                     if (task.status === 'review') {
                         validationButtons = `
-                            <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-700 flex justify-between gap-2">
-                                <button onclick="event.stopPropagation(); window.startValidation('${task.id}', 'valid')" class="flex-1 py-2 bg-emerald-50 dark:bg-emerald-900/30 hover:bg-emerald-500 hover:text-white text-emerald-600 dark:text-emerald-400 text-[10px] font-black rounded-xl transition-colors" title="Válido">✅ Validar</button>
-                                <button onclick="event.stopPropagation(); window.startValidation('${task.id}', 'improve')" class="flex-1 py-2 bg-amber-50 dark:bg-amber-900/30 hover:bg-amber-500 hover:text-white text-amber-600 dark:text-amber-400 text-[10px] font-black rounded-xl transition-colors" title="Mejorable">⚠️</button>
-                                <button onclick="event.stopPropagation(); window.startValidation('${task.id}', 'fix')" class="flex-1 py-2 bg-red-50 dark:bg-red-900/30 hover:bg-red-500 hover:text-white text-red-600 dark:text-red-400 text-[10px] font-black rounded-xl transition-colors" title="Por corrección">❌</button>
+                            <div class="mt-4 pt-3 border-t border-slate-200 dark:border-slate-600/30 flex justify-between gap-2">
+                                <button type="button" onclick="event.stopPropagation(); window.startValidation('${task.id}', 'valid')" class="flex-1 py-2 bg-emerald-50 dark:bg-emerald-900/40 border border-emerald-200 dark:border-emerald-700/30 text-emerald-700 dark:text-emerald-400 text-[10px] font-black rounded-xl text-center" title="Válido">✅ Validar</button>
+                                <button type="button" onclick="event.stopPropagation(); window.startValidation('${task.id}', 'improve')" class="flex-1 py-2 bg-amber-50 dark:bg-amber-900/40 border border-amber-200 dark:border-amber-700/30 text-amber-700 dark:text-amber-400 text-[10px] font-black rounded-xl text-center" title="Mejorable">⚠️</button>
+                                <button type="button" onclick="event.stopPropagation(); window.startValidation('${task.id}', 'fix')" class="flex-1 py-2 bg-red-50 dark:bg-red-900/40 border border-red-200 dark:border-red-700/30 text-red-700 dark:text-red-400 text-[10px] font-black rounded-xl text-center" title="Por corrección">❌</button>
                             </div>
                         `;
                     }
 
                     card.innerHTML = `
-                        <div class="role-indicator" style="background-color: ${role.color}"></div>
-                        <div class="mb-3 flex flex-wrap gap-1">${tags}</div>
-                        <h3 class="font-black text-slate-800 dark:text-slate-100 text-sm mb-3 leading-snug">${task.title}</h3>
+                        <div class="h-1.5 w-full absolute top-0 left-0 opacity-80" style="background-color: ${role.color}"></div>
+                        <div class="mb-3 flex flex-wrap gap-1 mt-1">${tags}</div>
+                        <h3 class="font-black text-slate-900 dark:text-slate-100 text-sm mb-3 leading-snug">${task.title}</h3>
                         ${driveButton}
                         ${validationButtons}
-                        <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-100 dark:border-slate-700">
-                            <span class="text-[9px] font-black text-indigo-600 dark:text-amber-400 uppercase bg-indigo-50 dark:bg-indigo-900/20 px-2 py-1 rounded-md">👤 ${task.assignee ? task.assignee.split(' ')[0] : 'S/A'}</span>
-                            <span class="text-[11px] bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded-md border border-slate-200 dark:border-slate-600 shadow-sm" title="${role.name}">${role.emoji}</span>
+                        <div class="flex items-center justify-between pt-4 mt-3 border-t border-slate-200 dark:border-slate-600/30 cursor-default">
+                            <span class="text-[9px] font-black text-slate-700 dark:text-slate-200 bg-slate-50 dark:bg-slate-700/50 backdrop-blur-sm border border-slate-200 dark:border-slate-600/30 px-3 py-1.5 rounded-full uppercase flex items-center gap-1">👤 ${task.assignee ? task.assignee.split(' ')[0] : 'S/A'}</span>
+                            <span class="text-[12px] bg-slate-50 dark:bg-slate-700/50 backdrop-blur-sm border border-slate-200 dark:border-slate-600/30 w-7 h-7 flex items-center justify-center rounded-full shadow-sm" title="${role.name}">${role.emoji}</span>
                         </div>`;
                     container.appendChild(card);
                 });
@@ -717,17 +766,17 @@
             const archList = document.getElementById('archived-list');
             if(archList) {
                 const archTasks = tasks.filter(t => t.status === 'archived');
-                archList.innerHTML = archTasks.length ? '' : '<p class="col-span-full text-slate-400 dark:text-slate-500 text-center py-10 uppercase font-black">Historial vacío</p>';
+                archList.innerHTML = archTasks.length ? '' : '<p class="col-span-full text-slate-500 dark:text-slate-500 text-center py-10 uppercase font-black">Historial vacío</p>';
                 archTasks.forEach(t => {
                     archList.innerHTML += `
-                        <div class="bg-white dark:bg-slate-800 p-6 rounded-[1.5rem] border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow relative group">
-                            <h4 class="font-black text-slate-800 dark:text-white text-sm mb-4 leading-snug">${t.title}</h4>
-                            <div class="flex justify-between text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase mb-5 bg-slate-50 dark:bg-slate-900 p-2 rounded-lg border border-slate-200 dark:border-slate-700">
+                        <div class="glass-ui p-6 rounded-[1.5rem] shadow-sm hover:shadow-md transition-shadow relative group">
+                            <h4 class="font-black text-slate-900 dark:text-slate-100 text-sm mb-4 leading-snug">${t.title}</h4>
+                            <div class="flex justify-between text-[9px] font-black text-slate-700 dark:text-slate-300 uppercase mb-5 bg-slate-50 dark:bg-slate-900/50 backdrop-blur-sm p-2 rounded-lg border border-slate-200 dark:border-slate-700/50 cursor-default">
                                 <span>👤 ${t.assignee}</span><span>📅 ${t.dateEnd || '---'}</span>
                             </div>
                             <div class="flex gap-2">
-                                <button onclick="window.editTask('${t.id}')" class="flex-1 bg-slate-100 dark:bg-slate-700 py-2.5 rounded-xl text-[9px] font-black text-slate-600 dark:text-slate-300 uppercase hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors">Ver</button>
-                                <button onclick="window.restoreTask('${t.id}')" class="flex-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-amber-400 py-2.5 rounded-xl text-[9px] font-black uppercase hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 dark:hover:text-white transition-colors">Restaurar ↩️</button>
+                                <button type="button" onclick="window.editTask('${t.id}')" class="flex-1 glass-ui py-2.5 rounded-xl text-[9px] font-black text-slate-800 dark:text-slate-200 uppercase">Ver</button>
+                                <button type="button" onclick="window.restoreTask('${t.id}')" class="flex-1 bg-indigo-100/60 dark:bg-indigo-900/40 border border-white/40 dark:border-indigo-700/30 text-indigo-800 dark:text-indigo-300 py-2.5 rounded-xl text-[9px] font-black uppercase">Restaurar ↩️</button>
                             </div>
                         </div>`;
                 });
@@ -793,10 +842,8 @@
             if(loaderText) loaderText.innerText = "Sincronizando datos...";
             document.getElementById('display-user').innerText = `👤 ${currentUser.toUpperCase()}`;
             
-            // Iniciar Latido (Heartbeat)
             startPresenceHeartbeat();
 
-            // Sync Roles
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'roles'), (snap) => {
                 roles = snap.docs.map(d => ({id: d.id, ...d.data()}));
                 if (roles.length === 0) seedRoles();
@@ -805,35 +852,27 @@
                 renderUI();
             }, (err) => setLoaderError("Error al sincronizar Roles", err.message));
 
-            // Sync Tasks
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'tasks'), (snap) => {
                 tasks = snap.docs.map(d => ({id: d.id, ...d.data()}));
                 renderUI();
                 document.getElementById('loading-overlay').classList.add('hidden');
             }, (err) => setLoaderError("Error al sincronizar Tareas", err.message));
 
-            // Sync Users & Update Notifications/Presence
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), (snap) => {
                 registeredUsers = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                
                 const me = registeredUsers.find(u => u.name === currentUser);
-                if (me) {
-                    window.updateNotificationsUI(me.notifications || []);
-                }
-
+                if (me) window.updateNotificationsUI(me.notifications || []);
                 renderTeamManager();
                 window.renderOnlineUsers();
                 window.renderAuthList();
             });
 
-            // Sync Config
             onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'master'), (snap) => {
                 if (snap.exists()) { 
                     config = snap.data(); 
                     updateStatusUI(); 
                     document.getElementById('btn-infopucp').href = config.infoPucpLink || '#';
-                }
-                else { 
+                } else { 
                     setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'master'), { available: true, link: '#', infoPucpLink: '#' });
                 }
             }, (err) => console.error("Config Sync Error:", err));
@@ -857,13 +896,9 @@
             const passV = document.getElementById('password-view');
             
             if (show) {
-                loginV.classList.add('hidden');
-                passV.classList.add('hidden');
-                regV.classList.remove('hidden');
+                loginV.classList.add('hidden'); passV.classList.add('hidden'); regV.classList.remove('hidden');
             } else {
-                regV.classList.add('hidden');
-                passV.classList.add('hidden');
-                loginV.classList.remove('hidden');
+                regV.classList.add('hidden'); passV.classList.add('hidden'); loginV.classList.remove('hidden');
             }
         };
 
@@ -877,29 +912,20 @@
 
         window.checkUserBeforeLogin = (name) => {
             if (!name) return;
-
             const existingUser = registeredUsers.find(u => u.name.toLowerCase() === name.toLowerCase());
-            
             if (existingUser) {
                 pendingLoginUser = existingUser;
                 document.getElementById('login-name-display').innerText = existingUser.name;
-                
-                const initials = existingUser.name.substring(0, 2).toUpperCase();
-                document.getElementById('login-avatar').innerText = initials;
+                document.getElementById('login-avatar').innerText = existingUser.name.substring(0, 2).toUpperCase();
                 
                 const helpMsg = document.getElementById('password-help-msg');
-                
-                if (existingUser.password) {
-                    helpMsg.classList.add('hidden');
-                } else {
-                    helpMsg.classList.remove('hidden');
-                }
+                if (existingUser.password) helpMsg.classList.add('hidden');
+                else helpMsg.classList.remove('hidden');
 
                 document.getElementById('login-view').classList.add('hidden');
                 document.getElementById('register-view').classList.add('hidden');
                 document.getElementById('password-view').classList.remove('hidden');
                 setTimeout(() => document.getElementById('login-pass').focus(), 100);
-
             } else {
                 window.showAlert("Ese usuario no existe. Regístralo haciendo clic en 'Nuevo'.");
             }
@@ -909,21 +935,15 @@
             if (!pendingLoginUser) return;
             const passInput = document.getElementById('login-pass').value.trim();
             
-            if (!/^\d{6}$/.test(passInput)) {
-                window.showAlert("La contraseña debe tener exactamente 6 números.");
-                return;
-            }
+            if (!/^\d{6}$/.test(passInput)) { window.showAlert("La contraseña debe tener exactamente 6 números."); return; }
 
             try {
                 if (pendingLoginUser.password) {
-                    if (pendingLoginUser.password !== passInput) {
-                        window.showAlert("Contraseña incorrecta.");
-                        return;
-                    }
+                    if (pendingLoginUser.password !== passInput) { window.showAlert("Contraseña incorrecta."); return; }
                     await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', pendingLoginUser.id), { isOnline: true, lastActive: Date.now() });
                 } else {
                     await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', pendingLoginUser.id), { password: passInput, isOnline: true, lastActive: Date.now() });
-                    window.showAlert("¡Clave de seguridad configurada exitosamente!");
+                    window.showAlert("¡Clave configurada exitosamente!");
                 }
 
                 currentUser = pendingLoginUser.name;
@@ -931,9 +951,7 @@
                 document.getElementById('auth-overlay').classList.add('hidden');
                 document.getElementById('login-pass').value = '';
                 startSync();
-            } catch (err) {
-                window.showAlert("Error en el servidor: " + err.message);
-            }
+            } catch (err) { window.showAlert("Error: " + err.message); }
         };
 
         window.registerNewUser = async () => {
@@ -943,48 +961,36 @@
             if (!name) { window.showAlert("Ingresa tu nombre completo."); return; }
             if (!/^\d{6}$/.test(pass)) { window.showAlert("La contraseña debe tener 6 números."); return; }
             
-            const existing = registeredUsers.find(u => u.name.toLowerCase() === name.toLowerCase());
-            if (existing) {
-                window.showAlert("Este usuario ya existe. Ve a inicio para entrar.");
-                return;
+            if (registeredUsers.find(u => u.name.toLowerCase() === name.toLowerCase())) {
+                window.showAlert("Este usuario ya existe."); return;
             }
 
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'users'), {
-                    name: name,
-                    password: pass,
-                    registeredAt: Date.now(),
-                    isOnline: true,
-                    lastActive: Date.now(),
-                    notifications: []
+                    name: name, password: pass, registeredAt: Date.now(), isOnline: true, lastActive: Date.now(), notifications: []
                 });
                 
                 currentUser = name;
                 localStorage.setItem('bi_kanban_user', currentUser);
                 document.getElementById('auth-overlay').classList.add('hidden');
-                
-                // clear reg fields
                 document.getElementById('reg-name').value = '';
                 document.getElementById('reg-pass').value = '';
                 window.toggleRegisterView(false);
-                
                 startSync();
-            } catch(err) {
-                window.showAlert("Error al registrar: " + err.message);
-            }
+            } catch(err) { window.showAlert("Error: " + err.message); }
         };
 
         window.renderAuthList = () => {
             const container = document.getElementById('auth-existing-list');
             if(!container) return;
             container.innerHTML = registeredUsers.map(u => `
-                <button onclick="window.checkUserBeforeLogin('${u.name}');" class="bg-slate-50 dark:bg-slate-900 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 border border-slate-200 dark:border-slate-700 p-3 rounded-2xl text-[10px] font-black text-slate-600 dark:text-slate-300 truncate uppercase transition-all shadow-sm">
+                <button onclick="window.checkUserBeforeLogin('${u.name}');" class="glass-ui p-3 rounded-2xl text-[10px] font-black text-slate-800 dark:text-slate-300 truncate uppercase shadow-sm">
                     ${u.name}
                 </button>
-            `).join('') || '<p class="col-span-2 text-[9px] text-slate-500 italic text-center py-4">No hay responsables en la base</p>';
+            `).join('') || '<p class="col-span-2 text-[9px] text-slate-500 italic text-center py-4">No hay responsables</p>';
         };
 
-        // --- SISTEMA DE MENCIONES EN COMENTARIOS ---
+        // --- SISTEMA DE MENCIONES ---
         
         const commentInput = document.getElementById('comment-input');
         const mentionDropdown = document.getElementById('mention-dropdown');
@@ -994,77 +1000,54 @@
                 const text = e.target.value;
                 const cursorPos = e.target.selectionStart;
                 const textBeforeCursor = text.slice(0, cursorPos);
-                
-                // Regex para capturar el texto después de la última arroba
                 const match = textBeforeCursor.match(/@([a-zA-ZáéíóúÁÉÍÓÚñÑ]*)$/);
                 
                 if (match) {
                     const search = match[1].toLowerCase();
-                    const filteredUsers = registeredUsers.filter(u => 
-                        u.name !== currentUser && u.name.toLowerCase().includes(search)
-                    );
+                    const filteredUsers = registeredUsers.filter(u => u.name !== currentUser && u.name.toLowerCase().includes(search));
                     
                     if (filteredUsers.length > 0) {
                         mentionDropdown.innerHTML = filteredUsers.map(u => `
-                            <div class="px-4 py-3 hover:bg-indigo-50 dark:hover:bg-slate-700 cursor-pointer border-b border-slate-100 dark:border-slate-700 last:border-0 transition-colors"
+                            <div class="px-4 py-3 hover:bg-yellow-100/50 dark:hover:bg-slate-700/50 cursor-pointer border-b border-slate-200 dark:border-slate-600/50 last:border-0 transition-colors"
                                  onclick="window.insertMention('${u.name}')">
-                                <p class="text-[11px] font-black text-slate-700 dark:text-slate-200">@${u.name}</p>
+                                <p class="text-[11px] font-black text-slate-800 dark:text-slate-200">@${u.name}</p>
                             </div>
                         `).join('');
                         mentionDropdown.classList.remove('hidden');
-                    } else {
-                        mentionDropdown.classList.add('hidden');
-                    }
-                } else {
-                    mentionDropdown.classList.add('hidden');
-                }
+                    } else { mentionDropdown.classList.add('hidden'); }
+                } else { mentionDropdown.classList.add('hidden'); }
             });
             
-            // Cerrar menú si click fuera
             document.addEventListener('click', (e) => {
-                if(e.target !== commentInput && !mentionDropdown.contains(e.target)) {
-                    mentionDropdown.classList.add('hidden');
-                }
+                if(e.target !== commentInput && !mentionDropdown.contains(e.target)) mentionDropdown.classList.add('hidden');
             });
         }
 
         window.insertMention = (name) => {
             const cursorPos = commentInput.selectionStart;
             const text = commentInput.value;
-            const textBeforeCursor = text.slice(0, cursorPos);
-            const textAfterCursor = text.slice(cursorPos);
-            
-            const replaceStart = textBeforeCursor.lastIndexOf('@');
-            const newText = text.slice(0, replaceStart) + `@${name} ` + textAfterCursor;
-            
+            const newText = text.slice(0, text.slice(0, cursorPos).lastIndexOf('@')) + `@${name} ` + text.slice(cursorPos);
             commentInput.value = newText;
             mentionDropdown.classList.add('hidden');
             commentInput.focus();
         };
 
-
         // --- RESTO DE MÉTODOS DE LA APP ---
 
         window.deleteUser = async (id) => {
-            if (confirm("¿Eliminar este responsable del equipo? Esto no borrará sus tareas.")) {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', id));
-            }
+            if (confirm("¿Eliminar este responsable?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', id));
         };
 
         window.saveConfigLinks = async () => {
-            const drive = document.getElementById('edit-drive-link').value;
-            const pucp = document.getElementById('edit-pucp-link').value;
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'master'), { 
-                link: drive,
-                infoPucpLink: pucp
+                link: document.getElementById('edit-drive-link').value,
+                infoPucpLink: document.getElementById('edit-pucp-link').value
             });
             window.closeFileEditModal();
         };
 
         window.toggleMasterFileStatus = async () => {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'master'), { 
-                available: !config.available 
-            });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'master'), { available: !config.available });
         };
 
         window.editTask = (id) => {
@@ -1090,26 +1073,18 @@
             window.showAlert("Tarea devuelta al tablero.");
         };
 
-        window.dragLeave = (ev) => {
-            ev.currentTarget.classList.remove('drag-over');
-        };
+        window.dragLeave = (ev) => ev.currentTarget.classList.remove('drag-over');
 
         window.drop = async (ev, newStatus) => {
             ev.preventDefault();
-            const targetElement = ev.currentTarget;
-            if (targetElement) {
-                targetElement.classList.remove('drag-over');
-            }
+            if (ev.currentTarget) ev.currentTarget.classList.remove('drag-over');
 
             const taskId = ev.dataTransfer.getData("taskId");
             const task = tasks.find(t => t.id === taskId);
             if (task) {
                 if (newStatus === 'done' && (task.role && roles.find(r => r.id === task.role)?.name.toLowerCase().includes('dax') || task.title.toLowerCase().includes('dax'))) {
                     const pendingModel = tasks.filter(t => (t.title.toLowerCase().includes('modelo') || t.title.toLowerCase().includes('relación')) && t.status !== 'done');
-                    if (pendingModel.length > 0) {
-                        window.showAlert(`Bloqueo: Finaliza el Modelo de Datos antes del DAX.`);
-                        return;
-                    }
+                    if (pendingModel.length > 0) { window.showAlert(`Bloqueo: Finaliza el Modelo de Datos antes del DAX.`); return; }
                 }
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', taskId), { status: newStatus });
             }
@@ -1117,18 +1092,12 @@
 
         window.deleteCurrentTask = async () => {
             const id = document.getElementById('edit-id').value;
-            if (id && confirm("¿Eliminar actividad permanentemente?")) {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id));
-                window.closeModal();
-            }
+            if (id && confirm("¿Eliminar actividad?")) { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id)); window.closeModal(); }
         };
 
         window.archiveCurrentTask = async () => {
             const id = document.getElementById('edit-id').value;
-            if (id) {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id), { status: 'archived' });
-                window.closeModal();
-            }
+            if (id) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id), { status: 'archived' }); window.closeModal(); }
         };
 
         window.addComment = async () => {
@@ -1138,30 +1107,18 @@
             const task = tasks.find(t => t.id === id);
             const newComments = [...(task.comments || []), { user: currentUser, text, date: new Date().toLocaleString() }];
             
-            // Lógica de Notificaciones de Menciones
             const lowerText = text.toLowerCase();
             for (const u of registeredUsers) {
                 if (u.name !== currentUser) {
                     const firstName = u.name.split(' ')[0].toLowerCase();
                     const cleanFullName = u.name.toLowerCase().replace(/\s/g, '');
-                    // Ver si el texto contiene @nombre o @nombrecompleto
                     if (lowerText.includes('@' + firstName) || lowerText.includes('@' + cleanFullName) || lowerText.includes('@' + u.name.toLowerCase())) {
-                        const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', u.id);
-                        const newNotif = {
-                            id: Date.now().toString(),
-                            taskId: id,
-                            taskTitle: task.title,
-                            from: currentUser,
-                            read: false,
-                            timestamp: Date.now()
-                        };
-                        const notifs = [...(u.notifications || []), newNotif];
-                        updateDoc(userRef, { notifications: notifs });
+                        const newNotif = { id: Date.now().toString(), taskId: id, taskTitle: task.title, from: currentUser, read: false, timestamp: Date.now() };
+                        updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', u.id), { notifications: [...(u.notifications || []), newNotif] });
                     }
                 }
             }
 
-            // Marcar notificaciones propias como leídas al comentar
             const me = registeredUsers.find(u => u.name === currentUser);
             if (me && me.notifications) {
                 let changed = false;
@@ -1181,11 +1138,7 @@
             if (!config.link || config.link === '#') return;
             const now = new Date();
             await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'accessLogs'), { 
-                user: currentUser, 
-                action: 'Abrió Drive Maestro', 
-                timestamp: Date.now(), 
-                date: now.toLocaleDateString(),
-                time: now.toLocaleTimeString()
+                user: currentUser, action: 'Abrió Drive Maestro', timestamp: Date.now(), date: now.toLocaleDateString(), time: now.toLocaleTimeString()
             });
             window.open(config.link, '_blank');
         };
@@ -1193,11 +1146,9 @@
         window.downloadAccessLogs = () => {
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'accessLogs'), (snap) => {
                 let log = "REPORTE DE AUDITORÍA CLOUD\n=========================\n\n";
-                const logs = snap.docs.map(d => d.data()).sort((a,b) => b.timestamp - a.timestamp);
-                logs.forEach(d => { log += `[${d.date} ${d.time}] USUARIO: ${d.user}\nACCION: ${d.action}\n-------------------------\n`; });
-                const blob = new Blob([log], { type: 'text/plain' });
+                snap.docs.map(d => d.data()).sort((a,b) => b.timestamp - a.timestamp).forEach(d => { log += `[${d.date} ${d.time}] USUARIO: ${d.user}\nACCION: ${d.action}\n-------------------------\n`; });
                 const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
+                a.href = URL.createObjectURL(new Blob([log], { type: 'text/plain' }));
                 a.download = `Auditoria_Kanban_BI.txt`;
                 a.click();
             }, { once: true });
@@ -1207,16 +1158,9 @@
             document.getElementById('task-form').reset(); 
             document.getElementById('edit-id').value = ''; 
             document.getElementById('task-status').value = 'backlog';
-            
-            // Auto-completado de nombre y fecha de inicio por defecto
             document.getElementById('task-assignee').value = currentUser;
-            
             const today = new Date();
-            const yyyy = today.getFullYear();
-            const mm = String(today.getMonth() + 1).padStart(2, '0');
-            const dd = String(today.getDate()).padStart(2, '0');
-            document.getElementById('task-date-start').value = `${yyyy}-${mm}-${dd}`;
-
+            document.getElementById('task-date-start').value = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
             document.getElementById('modal-overlay').classList.remove('hidden'); 
             renderComments([]); 
         };
@@ -1228,8 +1172,8 @@
             currentView = view;
             document.getElementById('kanban-view').classList.toggle('hidden', view !== 'kanban');
             document.getElementById('archive-view').classList.toggle('hidden', view !== 'archive');
-            document.getElementById('view-kanban').className = `flex-1 px-6 py-2 rounded-xl text-xs font-black transition-all ${view === 'kanban' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'} uppercase`;
-            document.getElementById('view-archive').className = `flex-1 px-6 py-2 rounded-xl text-xs font-black transition-all ${view === 'archive' ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-white shadow' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'} uppercase`;
+            document.getElementById('view-kanban').className = `flex-1 px-6 py-2 rounded-xl text-xs font-black transition-all ${view === 'kanban' ? 'bg-indigo-600/90 text-white shadow' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'} uppercase border border-transparent`;
+            document.getElementById('view-archive').className = `flex-1 px-6 py-2 rounded-xl text-xs font-black transition-all ${view === 'archive' ? 'bg-indigo-600/90 text-white shadow' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'} uppercase border border-transparent`;
         };
         window.allowDrop = (e) => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); };
         window.setFilter = (t) => { currentFilter = t; renderUI(); };
@@ -1245,14 +1189,12 @@
 
         // --- SISTEMA DE VALIDACIÓN ---
         window.startValidation = (taskId, type) => {
-            if (type === 'valid') {
-                window.submitValidation(taskId, type, 'Aprobado sin observaciones.');
-            } else {
+            if (type === 'valid') window.submitValidation(taskId, type, 'Aprobado sin observaciones.');
+            else {
                 document.getElementById('validation-task-id').value = taskId;
                 document.getElementById('validation-type').value = type;
                 document.getElementById('validation-detail').value = '';
-                const typeText = type === 'improve' ? '⚠️ Mejorable' : '❌ Por corrección';
-                document.getElementById('validation-title').innerText = `${typeText}`;
+                document.getElementById('validation-title').innerText = `${type === 'improve' ? '⚠️ Mejorable' : '❌ Por corrección'}`;
                 document.getElementById('validation-modal-overlay').classList.remove('hidden');
             }
         };
@@ -1264,59 +1206,49 @@
                 taskId = document.getElementById('validation-task-id').value;
                 type = document.getElementById('validation-type').value;
                 detail = document.getElementById('validation-detail').value.trim();
-                
-                if (!detail) {
-                    window.showAlert("Debes ingresar un motivo de la validación.");
-                    return;
-                }
+                if (!detail) { window.showAlert("Debes ingresar un motivo."); return; }
             }
 
             const task = tasks.find(t => t.id === taskId);
             if (!task) return;
 
-            let prefix = '✅ Válido';
-            if (type === 'improve') prefix = '⚠️ Mejorable';
-            if (type === 'fix') prefix = '❌ Por corrección';
-
-            const commentText = `[Validación: ${prefix}] ${detail}`;
-            const newComments = [...(task.comments || []), { user: currentUser, text: commentText, date: new Date().toLocaleString() }];
+            const prefix = type === 'improve' ? '⚠️ Mejorable' : (type === 'fix' ? '❌ Por corrección' : '✅ Válido');
+            const newComments = [...(task.comments || []), { user: currentUser, text: `[Validación: ${prefix}] ${detail}`, date: new Date().toLocaleString() }];
             
             try {
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', taskId), { comments: newComments });
                 if(isModal) window.closeValidationModal();
                 if(!isModal) window.showAlert(`Validación registrada: ${prefix}`);
-            } catch (err) {
-                window.showAlert("Error al registrar validación: " + err.message);
-            }
+            } catch (err) { window.showAlert("Error al registrar: " + err.message); }
         };
 
-        window.closeValidationModal = () => {
-            document.getElementById('validation-modal-overlay').classList.add('hidden');
-        };
+        window.closeValidationModal = () => document.getElementById('validation-modal-overlay').classList.add('hidden');
 
         window.addNewRole = async () => {
             const name = document.getElementById('new-role-name').value.trim();
             if (!name) return;
             try {
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'roles'), { 
-                    name, 
-                    emoji: document.getElementById('new-role-emoji').value.trim() || '⚙️', 
-                    color: document.getElementById('new-role-color').value 
-                });
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'roles'), { name, emoji: document.getElementById('new-role-emoji').value.trim() || '⚙️', color: document.getElementById('new-role-color').value });
                 document.getElementById('new-role-name').value = '';
-            } catch (err) {
-                window.showAlert("Error al agregar rol: " + err.message);
-            }
+            } catch (err) { window.showAlert("Error: " + err.message); }
         };
 
+        // --- CORRECCIÓN ELIMINAR ROL ---
         window.deleteRole = async (id) => { 
-            if (confirm("¿Eliminar rol?")) {
-                try {
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'roles', id)); 
-                } catch (err) {
-                    window.showAlert("Error al eliminar rol.");
-                }
+            if (!id) {
+                window.showAlert("Error interno: ID no encontrado.");
+                return;
             }
+            if (confirm("¿Estás seguro de que deseas eliminar este rol permanentemente?")) {
+                try {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'roles', id));
+                    // No es necesario alertar éxito si se borra rápidamente en la UI, pero puedes descomentar si lo prefieres
+                    // window.showAlert("Rol eliminado correctamente.");
+                } catch (err) {
+                    console.error("Error al eliminar rol:", err);
+                    window.showAlert("Error al eliminar el rol: " + err.message);
+                }
+            } 
         };
 
         const taskForm = document.getElementById('task-form');
@@ -1325,45 +1257,26 @@
                 e.preventDefault();
                 const id = document.getElementById('edit-id').value;
                 const labelsInput = document.getElementById('task-labels').value;
-                const labels = labelsInput ? labelsInput.split(',').map(l => { 
-                    let tag = l.trim(); 
-                    return tag.startsWith('#') ? tag : '#' + tag; 
-                }).filter(l => l !== '#') : [];
-
-                const statusSelectValue = document.getElementById('task-status').value || 'backlog';
+                const labels = labelsInput ? labelsInput.split(',').map(l => l.trim().startsWith('#') ? l.trim() : '#' + l.trim()).filter(l => l !== '#') : [];
 
                 const data = {
-                    title: document.getElementById('task-title').value,
-                    role: document.getElementById('task-role').value,
-                    assignee: document.getElementById('task-assignee').value,
-                    status: statusSelectValue,
-                    dateStart: document.getElementById('task-date-start').value,
-                    dateEnd: document.getElementById('task-date-end').value,
-                    labels: labels,
-                    link: document.getElementById('task-link').value,
-                    updatedBy: currentUser,
-                    timestamp: Date.now()
+                    title: document.getElementById('task-title').value, role: document.getElementById('task-role').value,
+                    assignee: document.getElementById('task-assignee').value, status: document.getElementById('task-status').value || 'backlog',
+                    dateStart: document.getElementById('task-date-start').value, dateEnd: document.getElementById('task-date-end').value,
+                    labels: labels, link: document.getElementById('task-link').value, updatedBy: currentUser, timestamp: Date.now()
                 };
 
                 if (data.status === 'done' && (data.role && roles.find(r => r.id === data.role)?.name.toLowerCase().includes('dax') || data.title.toLowerCase().includes('dax'))) {
-                    const pendingModel = tasks.filter(t => t.id !== id && (t.title.toLowerCase().includes('modelo') || t.title.toLowerCase().includes('relación')) && t.status !== 'done');
-                    if (pendingModel.length > 0) {
-                        window.showAlert(`Bloqueo: Finaliza el Modelo de Datos antes del DAX.`);
-                        return;
+                    if (tasks.filter(t => t.id !== id && (t.title.toLowerCase().includes('modelo') || t.title.toLowerCase().includes('relación')) && t.status !== 'done').length > 0) {
+                        window.showAlert(`Bloqueo: Finaliza el Modelo de Datos antes del DAX.`); return;
                     }
                 }
 
                 try {
-                    if (id) {
-                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id), data);
-                    } else {
-                        data.comments = [];
-                        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'tasks'), data);
-                    }
+                    if (id) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'tasks', id), data);
+                    else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'tasks'), { ...data, comments: [] });
                     window.closeModal();
-                } catch (err) {
-                    window.showAlert("Error al guardar tarea: " + err.message);
-                }
+                } catch (err) { window.showAlert("Error: " + err.message); }
             });
         }
 
