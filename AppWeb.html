@@ -60,18 +60,18 @@
         
         /* Hover en MODO DÍA */
         button:not(.no-yellow-hover):hover, a.btn-global-hover:hover {
-            background-color: #fef08a !important; /* Tailwind yellow-200 */
-            color: #713f12 !important; /* Tailwind yellow-900 para alto contraste */
-            border-color: #fde047 !important; /* Tailwind yellow-300 */
+            background-color: #fef08a !important; 
+            color: #713f12 !important; 
+            border-color: #fde047 !important; 
             box-shadow: 0 4px 10px rgba(250, 204, 21, 0.2) !important;
             transform: translateY(-1px);
         }
         
         /* Hover en MODO NOCHE */
         html.dark button:not(.no-yellow-hover):hover, html.dark a.btn-global-hover:hover {
-            background-color: #facc15 !important; /* Tailwind yellow-400 */
-            color: #422006 !important; /* Tailwind yellow-950 */
-            border-color: #eab308 !important; /* Tailwind yellow-500 */
+            background-color: #facc15 !important; 
+            color: #422006 !important; 
+            border-color: #eab308 !important; 
             box-shadow: 0 4px 10px rgba(234, 179, 8, 0.2) !important;
         }
         /* ------------------------------------------------------------------- */
@@ -85,10 +85,11 @@
         }
         
         /* Tarjetas y Animaciones */
-        .task-card { cursor: grab; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .task-card { cursor: grab; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid #e2e8f0; }
         .task-card:active { cursor: grabbing; transform: scale(0.98); }
-        .task-card:hover { transform: translateY(-4px); box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.1); background-color: #f8fafc !important; }
-        html.dark .task-card:hover { box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.4); background-color: rgba(30, 41, 59, 0.8) !important; }
+        .task-card:hover { transform: translateY(-4px); box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.15); background-color: #ffffff !important; }
+        html.dark .task-card { border-color: rgba(71, 85, 105, 0.5); }
+        html.dark .task-card:hover { box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.4); background-color: rgba(30, 41, 59, 0.9) !important; }
         
         .drag-over { filter: brightness(1.1); transform: scale(1.02); border: 2px dashed #818cf8 !important; }
         html.dark .drag-over { filter: brightness(1.3); }
@@ -109,39 +110,46 @@
         .gantt-shell { min-height: 70vh; }
         .gantt-board { display: grid; grid-template-columns: 420px minmax(720px, 1fr); overflow: hidden; }
         .gantt-left, .gantt-right { max-height: 72vh; overflow: auto; }
-        .gantt-left { border-right: 1px solid #e2e8f0; }
+        .gantt-left { border-right: 2px solid #cbd5e1; }
         html.dark .gantt-left { border-right-color: rgba(71, 85, 105, 0.45); }
-        .gantt-head-row, .gantt-data-row, .gantt-group-row, .gantt-role-row { display: grid; grid-template-columns: 1.6fr .8fr .7fr .8fr; align-items: center; min-height: 42px; border-bottom: 1px solid #edf2f7; }
+        .gantt-head-row, .gantt-data-row, .gantt-group-row, .gantt-role-row { display: grid; grid-template-columns: 1.6fr .8fr .7fr .8fr; align-items: center; min-height: 42px; border-bottom: 1px solid #cbd5e1; }
         html.dark .gantt-head-row, html.dark .gantt-data-row, html.dark .gantt-group-row, html.dark .gantt-role-row { border-bottom-color: rgba(71, 85, 105, 0.35); }
-        .gantt-head-row { position: sticky; top: 0; z-index: 10; background: #f8fafc; }
-        html.dark .gantt-head-row { background: rgba(15, 23, 42, .96); }
+        
+        /* Headers Resaltados en Modo Día para el Gantt */
+        .gantt-head-row { position: sticky; top: 0; z-index: 10; background: #e2e8f0; color: #0f172a; font-weight: 900; }
+        html.dark .gantt-head-row { background: rgba(15, 23, 42, .96); color: #94a3b8; }
+        
         .gantt-cell { padding: 0 14px; min-width: 0; }
-        .gantt-group-row { background: rgba(238, 242, 255, .75); font-weight: 900; }
+        .gantt-group-row { background: rgba(224, 231, 255, .8); font-weight: 900; }
         html.dark .gantt-group-row { background: rgba(49, 46, 129, .18); }
-        .gantt-role-row { background: rgba(248, 250, 252, .85); color: #64748b; font-weight: 900; }
+        .gantt-role-row { background: rgba(241, 245, 249, .9); color: #475569; font-weight: 900; }
         html.dark .gantt-role-row { background: rgba(30, 41, 59, .45); color: #cbd5e1; }
         .gantt-task-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
         .gantt-subtask-title { padding-left: 22px; color: #64748b; }
         html.dark .gantt-subtask-title { color: #cbd5e1; }
         .gantt-timeline { position: relative; width: max-content; min-width: 100%; }
-        .gantt-months, .gantt-days { display: grid; position: sticky; top: 0; z-index: 8; background: #f8fafc; }
-        html.dark .gantt-months, html.dark .gantt-days { background: rgba(15, 23, 42, .96); }
+        
+        /* Timelines Headers Resaltados */
+        .gantt-months, .gantt-days { display: grid; position: sticky; top: 0; z-index: 8; background: #e2e8f0; color: #0f172a; }
+        html.dark .gantt-months, html.dark .gantt-days { background: rgba(15, 23, 42, .96); color: #94a3b8; }
         .gantt-months { height: 28px; }
-        .gantt-days { top: 28px; height: 34px; border-bottom: 1px solid #e2e8f0; }
+        .gantt-days { top: 28px; height: 34px; border-bottom: 2px solid #cbd5e1; }
         html.dark .gantt-days { border-bottom-color: rgba(71, 85, 105, .45); }
-        .gantt-month, .gantt-day { border-right: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; }
+        
+        .gantt-month, .gantt-day { border-right: 1px solid #cbd5e1; display: flex; align-items: center; justify-content: center; }
         html.dark .gantt-month, html.dark .gantt-day { border-right-color: rgba(71, 85, 105, .35); }
         .gantt-month { justify-content: flex-start; padding-left: 10px; }
-        .gantt-day.weekend, .gantt-grid-day.weekend { background: rgba(241, 245, 249, .75); }
+        .gantt-day.weekend, .gantt-grid-day.weekend { background: rgba(203, 213, 225, 0.4); }
         html.dark .gantt-day.weekend, html.dark .gantt-grid-day.weekend { background: rgba(30, 41, 59, .5); }
+        
         .gantt-body { position: relative; }
         .gantt-grid { position: absolute; inset: 0; display: grid; pointer-events: none; z-index: 0; }
-        .gantt-grid-day { border-right: 1px solid #eef2f7; }
+        .gantt-grid-day { border-right: 1px solid #e2e8f0; }
         html.dark .gantt-grid-day { border-right-color: rgba(71, 85, 105, .28); }
         .gantt-bars { position: relative; z-index: 1; }
-        .gantt-chart-row, .gantt-chart-group, .gantt-chart-role { position: relative; min-height: 42px; border-bottom: 1px solid #edf2f7; }
-        .gantt-chart-group { background: rgba(238, 242, 255, .5); }
-        .gantt-chart-role { background: rgba(248, 250, 252, .6); }
+        .gantt-chart-row, .gantt-chart-group, .gantt-chart-role { position: relative; min-height: 42px; border-bottom: 1px solid #cbd5e1; }
+        .gantt-chart-group { background: rgba(224, 231, 255, .5); }
+        .gantt-chart-role { background: rgba(241, 245, 249, .6); }
         html.dark .gantt-chart-row, html.dark .gantt-chart-group, html.dark .gantt-chart-role { border-bottom-color: rgba(71, 85, 105, .35); }
         .gantt-bar { position: absolute; top: 10px; height: 22px; border-radius: .75rem; color: white; padding: 0 10px; display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 900; overflow: hidden; white-space: nowrap; box-shadow: 0 10px 18px rgba(15, 23, 42, .14); cursor: pointer; }
         .gantt-bar::after { content: ''; position: absolute; inset: 0; width: var(--progress); background: rgba(255,255,255,.24); pointer-events: none; }
@@ -191,7 +199,7 @@
         .gantt-density-select { min-width: 152px; }
         .gantt-chart-group { background: linear-gradient(90deg, rgba(99,102,241,.12), rgba(14,165,233,.06)); }
         html.dark .gantt-chart-group { background: linear-gradient(90deg, rgba(99,102,241,.22), rgba(14,165,233,.09)); }
-        .gantt-chart-row { background: rgba(255,255,255,.34); }
+        .gantt-chart-row { background: rgba(255,255,255,.5); }
         html.dark .gantt-chart-row { background: rgba(15,23,42,.08); }
         .gantt-bar.task-main { background-image: linear-gradient(90deg, rgba(255,255,255,.18), rgba(255,255,255,0)) !important; outline: 2px solid rgba(255,255,255,.42); outline-offset: -2px; }
         .gantt-bar.subtask { filter: saturate(.9) brightness(1.04); }
@@ -214,7 +222,7 @@
         .gantt-board.compact .gantt-cell { padding-left: 10px; padding-right: 10px; }
         .gantt-indicator-option { display: flex; align-items: center; gap: .5rem; padding: .65rem .75rem; border-radius: .9rem; }
         .gantt-indicator-option input { width: 1rem; height: 1rem; }
-</style>
+    </style>
 </head>
 <body class="font-sans p-4 md:p-6 custom-scrollbar overflow-x-hidden">
 
@@ -397,26 +405,26 @@
         </div>
     </header>
 
-    <!-- KANBAN VIEW -->
+    <!-- KANBAN VIEW (Colores intensificados para reducir fatiga visual en día) -->
     <div id="kanban-view" class="flex gap-6 overflow-x-auto pb-8 custom-scrollbar items-start relative z-10">
-        <div id="col-backlog" class="kanban-column flex-shrink-0 bg-blue-50 dark:bg-slate-800/40 border border-blue-200 dark:border-slate-700/50 shadow-sm" ondrop="drop(event, 'backlog')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
-            <h2 class="text-[11px] font-black text-blue-800 dark:text-slate-300 uppercase mb-5 px-1 flex justify-between items-center"><span>📥 Backlog</span> <span id="badge-backlog" class="bg-blue-600 dark:bg-slate-900 text-white shadow-sm px-2.5 py-0.5 rounded-full text-[9px]">0</span></h2>
+        <div id="col-backlog" class="kanban-column flex-shrink-0 bg-blue-100 dark:bg-slate-800/60 border border-blue-300 dark:border-slate-600 shadow-sm" ondrop="drop(event, 'backlog')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+            <h2 class="text-[11px] font-black text-blue-900 dark:text-slate-300 uppercase mb-5 px-1 flex justify-between items-center"><span>📥 Backlog</span> <span id="badge-backlog" class="bg-blue-600 dark:bg-slate-900 text-white shadow-sm px-2.5 py-0.5 rounded-full text-[9px]">0</span></h2>
             <div id="tasks-backlog" class="space-y-4"></div>
         </div>
-        <div id="col-todo" class="kanban-column flex-shrink-0 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/30 shadow-sm" ondrop="drop(event, 'todo')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
-            <h2 class="text-[11px] font-black text-amber-800 dark:text-amber-500 uppercase mb-5 px-1 flex justify-between items-center"><span>📋 Por hacer</span> <span id="badge-todo" class="bg-amber-500 dark:bg-amber-900 text-white shadow-sm px-2.5 py-0.5 rounded-full text-[9px]">0</span></h2>
+        <div id="col-todo" class="kanban-column flex-shrink-0 bg-amber-100 dark:bg-amber-900/40 border border-amber-300 dark:border-amber-700/50 shadow-sm" ondrop="drop(event, 'todo')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+            <h2 class="text-[11px] font-black text-amber-900 dark:text-amber-500 uppercase mb-5 px-1 flex justify-between items-center"><span>📋 Por hacer</span> <span id="badge-todo" class="bg-amber-500 dark:bg-amber-900 text-white shadow-sm px-2.5 py-0.5 rounded-full text-[9px]">0</span></h2>
             <div id="tasks-todo" class="space-y-4"></div>
         </div>
-        <div id="col-progress" class="kanban-column flex-shrink-0 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-700/30 shadow-sm" ondrop="drop(event, 'progress')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
-            <h2 class="text-[11px] font-black text-indigo-800 dark:text-indigo-400 uppercase mb-5 px-1 flex justify-between items-center"><span>🚧 En proceso</span> <span id="badge-progress" class="bg-indigo-500 dark:bg-indigo-900 text-white shadow-sm px-2.5 py-0.5 rounded-full text-[9px]">0</span></h2>
+        <div id="col-progress" class="kanban-column flex-shrink-0 bg-indigo-100 dark:bg-indigo-900/40 border border-indigo-300 dark:border-indigo-700/50 shadow-sm" ondrop="drop(event, 'progress')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+            <h2 class="text-[11px] font-black text-indigo-900 dark:text-indigo-400 uppercase mb-5 px-1 flex justify-between items-center"><span>🚧 En proceso</span> <span id="badge-progress" class="bg-indigo-500 dark:bg-indigo-900 text-white shadow-sm px-2.5 py-0.5 rounded-full text-[9px]">0</span></h2>
             <div id="tasks-progress" class="space-y-4"></div>
         </div>
-        <div id="col-review" class="kanban-column flex-shrink-0 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700/30 shadow-sm" ondrop="drop(event, 'review')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
-            <h2 class="text-[11px] font-black text-purple-800 dark:text-purple-400 uppercase mb-5 px-1 flex justify-between items-center"><span>👀 Revisión</span> <span id="badge-review" class="bg-purple-500 dark:bg-purple-900 text-white shadow-sm px-2.5 py-0.5 rounded-full text-[9px]">0</span></h2>
+        <div id="col-review" class="kanban-column flex-shrink-0 bg-purple-100 dark:bg-purple-900/40 border border-purple-300 dark:border-purple-700/50 shadow-sm" ondrop="drop(event, 'review')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+            <h2 class="text-[11px] font-black text-purple-900 dark:text-purple-400 uppercase mb-5 px-1 flex justify-between items-center"><span>👀 Revisión</span> <span id="badge-review" class="bg-purple-500 dark:bg-purple-900 text-white shadow-sm px-2.5 py-0.5 rounded-full text-[9px]">0</span></h2>
             <div id="tasks-review" class="space-y-4"></div>
         </div>
-        <div id="col-done" class="kanban-column flex-shrink-0 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-700/30 shadow-sm" ondrop="drop(event, 'done')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
-            <h2 class="text-[11px] font-black text-emerald-800 dark:text-emerald-400 uppercase mb-5 px-1 flex justify-between items-center"><span>✅ Finalizado</span> <span id="badge-done" class="bg-emerald-500 dark:bg-emerald-900 text-white shadow-sm px-2.5 py-0.5 rounded-full text-[9px]">0</span></h2>
+        <div id="col-done" class="kanban-column flex-shrink-0 bg-emerald-100 dark:bg-emerald-900/40 border border-emerald-300 dark:border-emerald-700/50 shadow-sm" ondrop="drop(event, 'done')" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">
+            <h2 class="text-[11px] font-black text-emerald-900 dark:text-emerald-400 uppercase mb-5 px-1 flex justify-between items-center"><span>✅ Finalizado</span> <span id="badge-done" class="bg-emerald-500 dark:bg-emerald-900 text-white shadow-sm px-2.5 py-0.5 rounded-full text-[9px]">0</span></h2>
             <div id="tasks-done" class="space-y-4"></div>
         </div>
     </div>
@@ -436,7 +444,7 @@
                         Vista
                         <select id="gantt-density" onchange="renderGanttView()" class="gantt-density-select bg-transparent text-slate-800 dark:text-white outline-none ml-2">
                             <option value="detailed" selected>Detallada</option>
-                            <option value="compact">Compacta</option>
+                            <option value="compact">Compacta (Todo el Proyecto)</option>
                         </select>
                     </label>
                     <div id="gantt-summary" class="grid grid-cols-2 lg:grid-cols-4 gap-3 w-full xl:w-auto"></div>
@@ -444,7 +452,7 @@
             </div>
             <div class="gantt-board">
                 <div class="gantt-left custom-scrollbar">
-                    <div class="gantt-head-row text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                    <div class="gantt-head-row text-[10px] font-black text-slate-700 dark:text-slate-400 uppercase tracking-widest">
                         <div class="gantt-cell">Actividad</div>
                         <div class="gantt-cell">Responsable</div>
                         <div class="gantt-cell">Estado</div>
@@ -454,8 +462,8 @@
                 </div>
                 <div class="gantt-right custom-scrollbar">
                     <div class="gantt-timeline" id="gantt-timeline">
-                        <div class="gantt-months text-[10px] font-black text-slate-600 dark:text-slate-300 uppercase" id="gantt-months"></div>
-                        <div class="gantt-days text-[9px] font-black text-slate-500 dark:text-slate-400" id="gantt-days"></div>
+                        <div class="gantt-months text-[10px] font-black text-slate-700 dark:text-slate-300 uppercase" id="gantt-months"></div>
+                        <div class="gantt-days text-[9px] font-black text-slate-700 dark:text-slate-400" id="gantt-days"></div>
                         <div class="gantt-body" id="gantt-body">
                             <div class="gantt-grid" id="gantt-grid"></div>
                             <div class="gantt-today" id="gantt-today"></div>
@@ -583,7 +591,7 @@
                             <input type="url" id="edit-pucp-link" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-xs font-bold outline-none focus:border-indigo-500/50">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-1">Duración del Proyecto (días) 📆</label>
+                            <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-1">Duración del Proyecto (días máximos) 📆</label>
                             <input type="number" min="1" max="730" id="edit-project-days" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-xs font-bold outline-none focus:border-indigo-500/50" placeholder="Ej. 30">
                         </div>
                         <div>
@@ -658,11 +666,11 @@
 
     <!-- SISTEMA DE ALERTAS -->
     <div id="alert-overlay" class="fixed inset-0 hidden flex items-center justify-center p-4 z-[220] glass-overlay">
-        <div class="glass-ui !bg-white/95 dark:!bg-slate-800/95 rounded-[2rem] shadow-2xl p-10 max-w-sm text-center border-t-[8px] border-red-500 relative overflow-hidden cursor-default">
-            <div class="w-20 h-20 bg-red-100/50 dark:bg-red-900/30 backdrop-blur-sm text-red-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-4 border border-red-200/50 dark:border-red-800/50">⚠️</div>
+        <div class="glass-ui !bg-white/95 dark:!bg-slate-800/95 rounded-[2rem] shadow-2xl p-10 max-w-sm text-center border-t-[8px] border-indigo-500 relative overflow-hidden cursor-default">
+            <div class="w-20 h-20 bg-indigo-100/50 dark:bg-indigo-900/30 backdrop-blur-sm text-indigo-600 rounded-full flex items-center justify-center text-4xl mx-auto mb-4 border border-indigo-200/50 dark:border-indigo-800/50">🔔</div>
             <h4 class="text-2xl font-black text-slate-900 dark:text-white mb-2">Aviso del Sistema</h4>
             <p id="alert-message" class="text-slate-700 dark:text-slate-300 text-sm mb-8 leading-relaxed font-medium"></p>
-            <button onclick="closeAlert()" class="w-full bg-slate-900/90 dark:bg-slate-700/90 text-white py-4 rounded-xl font-black uppercase shadow-lg border border-slate-700 dark:border-slate-600">Entendido</button>
+            <button onclick="closeAlert()" class="w-full bg-indigo-600/90 dark:bg-indigo-600/90 text-white py-4 rounded-xl font-black uppercase shadow-lg border border-indigo-500/50">Entendido</button>
         </div>
     </div>
 
@@ -982,13 +990,13 @@
             }
         };
 
-
+        // Tonos ligeramente más fuertes para día y compatibles en noche
         const ganttStatusMeta = {
-            backlog: { label: 'Backlog', color: '#2563eb', tint: 'bg-blue-50 dark:bg-slate-800/40' },
-            todo: { label: 'Por hacer', color: '#f59e0b', tint: 'bg-amber-50 dark:bg-amber-900/20' },
-            progress: { label: 'En proceso', color: '#6366f1', tint: 'bg-indigo-50 dark:bg-indigo-900/20' },
-            review: { label: 'Revisión', color: '#a855f7', tint: 'bg-purple-50 dark:bg-purple-900/20' },
-            done: { label: 'Finalizado', color: '#10b981', tint: 'bg-emerald-50 dark:bg-emerald-900/20' }
+            backlog: { label: 'Backlog', color: '#2563eb', tint: 'bg-blue-100 dark:bg-slate-800/60' },
+            todo: { label: 'Por hacer', color: '#d97706', tint: 'bg-amber-100 dark:bg-amber-900/40' },
+            progress: { label: 'En proceso', color: '#4f46e5', tint: 'bg-indigo-100 dark:bg-indigo-900/40' },
+            review: { label: 'Revisión', color: '#9333ea', tint: 'bg-purple-100 dark:bg-purple-900/40' },
+            done: { label: 'Finalizado', color: '#059669', tint: 'bg-emerald-100 dark:bg-emerald-900/40' }
         };
 
         function escapeHtml(value) {
@@ -1130,6 +1138,7 @@
             if (task.status === 'review' && statuses.includes('review')) return 100;
             return 0;
         }
+        
         function renderGanttView() {
             const table = document.getElementById('gantt-table');
             const months = document.getElementById('gantt-months');
@@ -1144,25 +1153,42 @@
 
             const visible = ganttVisibleTasks();
             const rows = ganttRows();
+            
+            // Indicador Resumen siempre usa el config base para Duración
+            const configuredDays = Math.max(1, Number(config.projectDays || 30));
+            const indicatorTasks = ganttIndicatorTasks();
+            const advancedCount = indicatorTasks.filter(task => ganttProgressFromStatus(task) === 100).length;
+            const progressPct = indicatorTasks.length ? Math.round((advancedCount / indicatorTasks.length) * 100) : 0;
+            const people = new Set(indicatorTasks.map(t => t.assignee).filter(Boolean)).size;
+            
+            summary.innerHTML = [
+                ['Tareas', indicatorTasks.length],
+                ['Duración', `${configuredDays} días`],
+                ['Avance', `${advancedCount}/${indicatorTasks.length} (${progressPct}%)`],
+                ['Responsables', people]
+            ].map(([label, value]) => `<div class="gantt-summary-pill glass-ui"><p class="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">${label}</p><strong class="text-lg font-black text-slate-900 dark:text-white">${value}</strong></div>`).join('');
+
             if (!visible.length) {
                 table.innerHTML = '<div class="p-10 text-center text-xs font-black text-slate-500 uppercase">No hay tareas para los filtros actuales</div>';
                 months.innerHTML = days.innerHTML = grid.innerHTML = bars.innerHTML = '';
-                summary.innerHTML = '';
                 return;
             }
 
             const starts = visible.map(ganttTaskStart);
+            const minDate = ganttAddDays(new Date(Math.min(...starts)), -2); // Margen a la izquierda
+            
+            // Calcular máximo para que encaje exacto o con padding
+            const configuredEnd = ganttAddDays(new Date(Math.min(...starts)), configuredDays - 1);
             const ends = visible.map(ganttTaskEnd);
-            const minDate = ganttAddDays(new Date(Math.min(...starts)), -2);
-            const configuredDays = Math.max(1, Number(config.projectDays || 0));
-            const naturalProjectDays = ganttDiffDays(new Date(Math.max(...ends)), new Date(Math.min(...starts))) + 1;
-            const projectHorizonDays = Math.max(naturalProjectDays, configuredDays);
-            const configuredEnd = ganttAddDays(new Date(Math.min(...starts)), projectHorizonDays - 1);
-            const maxDate = ganttAddDays(new Date(Math.max(...ends, configuredEnd)), 3);
+            const maxDate = ganttAddDays(new Date(Math.max(...ends, configuredEnd)), 3); // Padding
+            
             const totalDays = Math.max(1, ganttDiffDays(maxDate, minDate) + 1);
             const rightViewport = document.querySelector('.gantt-right')?.clientWidth || 760;
-            const fittedDayWidth = Math.floor(rightViewport / Math.max(totalDays, 1));
-            const dayWidth = ganttIsCompact() ? Math.max(12, Math.min(28, fittedDayWidth)) : 54;
+            
+            // Ajuste especial para que la vista compacta apriete todos los días sin scroll
+            const fittedDayWidth = Math.max(2, Math.floor(rightViewport / Math.max(totalDays, 1)));
+            const dayWidth = ganttIsCompact() ? fittedDayWidth : 54;
+            
             const totalHeight = rows.reduce((sum, row) => sum + ganttRowHeight(row), 0);
             const dayList = Array.from({ length: totalDays }, (_, index) => ganttAddDays(minDate, index));
             const template = `repeat(${totalDays}, ${dayWidth}px)`;
@@ -1233,7 +1259,7 @@
                     isSubtask = true;
                 }
                 const left = ganttDiffDays(start, minDate) * dayWidth;
-                const width = Math.max((ganttDiffDays(end, start) + 1) * dayWidth - 8, isSubtask ? 30 : 40);
+                const width = Math.max((ganttDiffDays(end, start) + 1) * dayWidth - (ganttIsCompact() ? 2 : 8), isSubtask ? 20 : 30);
                 const overdue = task.status !== 'done' && end < new Date();
                 return `<div class="gantt-chart-row" ${heightStyle}><button type="button" onclick="window.editTask('${task.id}')" class="gantt-bar ${isSubtask ? 'subtask' : 'task-main'} ${overdue ? 'overdue' : ''}" style="left:${left}px;width:${width}px;background:${color};--progress:${progress}%"><span>${escapeHtml(title)}</span></button></div>`;
             }).join('');
@@ -1242,22 +1268,8 @@
             const todayOffset = ganttDiffDays(today, minDate) * dayWidth + dayWidth / 2;
             todayLine.style.left = `${todayOffset}px`;
             todayLine.style.display = todayOffset >= 0 && todayOffset <= totalDays * dayWidth ? 'block' : 'none';
-
-            const indicatorTasks = ganttIndicatorTasks();
-            const indicatorStarts = indicatorTasks.map(ganttTaskStart);
-            const indicatorEnds = indicatorTasks.map(ganttTaskEnd);
-            const naturalIndicatorDays = indicatorTasks.length ? (ganttDiffDays(new Date(Math.max(...indicatorEnds)), new Date(Math.min(...indicatorStarts))) + 1) : 0;
-            const projectDays = Math.max(Number(config.projectDays || 0), naturalIndicatorDays, projectHorizonDays);
-            const advancedCount = indicatorTasks.filter(task => ganttProgressFromStatus(task) === 100).length;
-            const progressPct = indicatorTasks.length ? Math.round((advancedCount / indicatorTasks.length) * 100) : 0;
-            const people = new Set(indicatorTasks.map(t => t.assignee).filter(Boolean)).size;
-            summary.innerHTML = [
-                ['Tareas', indicatorTasks.length],
-                ['Duración', `${projectDays} días`],
-                ['Avance', `${advancedCount}/${indicatorTasks.length} (${progressPct}%)`],
-                ['Responsables', people]
-            ].map(([label, value]) => `<div class="gantt-summary-pill glass-ui"><p class="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">${label}</p><strong class="text-lg font-black text-slate-900 dark:text-white">${value}</strong></div>`).join('');
         }
+
         function renderUI() {
             const statuses = ['backlog', 'todo', 'progress', 'review', 'done'];
             const allLabels = new Set();
@@ -1928,6 +1940,12 @@
                 }
             } 
         };
+        
+        function parseDateLocal(dateStr) {
+            if(!dateStr) return new Date();
+            const [y, m, d] = dateStr.split('-').map(Number);
+            return new Date(y, m - 1, d);
+        }
 
         const taskForm = document.getElementById('task-form');
         if (taskForm) {
@@ -1936,14 +1954,43 @@
                 
                 try {
                     const id = document.getElementById('edit-id').value;
+                    
+                    // --- VALIDACIÓN LIMITANTE DEL PROYECTO ---
+                    const configuredDays = Math.max(1, Number(config.projectDays || 30));
+                    let earliestStart = null;
+                    tasks.forEach(t => {
+                        if (t.id !== id && t.dateStart) {
+                            const d = parseDateLocal(t.dateStart).getTime();
+                            if (!earliestStart || d < earliestStart) earliestStart = d;
+                        }
+                    });
+                    
+                    const formDateStartRaw = document.getElementById('task-date-start').value;
+                    const currentTaskStart = parseDateLocal(formDateStartRaw).getTime();
+                    if (!earliestStart || currentTaskStart < earliestStart) {
+                        earliestStart = currentTaskStart;
+                    }
+                    
+                    const maxAllowedEndMs = earliestStart + ((configuredDays - 1) * 86400000);
+                    const formDateEndRaw = document.getElementById('task-date-end').value || formDateStartRaw;
+                    const currentTaskEndMs = parseDateLocal(formDateEndRaw).getTime();
+                    
+                    if (currentTaskEndMs > maxAllowedEndMs) {
+                        const maxDateObj = new Date(maxAllowedEndMs);
+                        const maxDateStr = `${maxDateObj.getFullYear()}-${String(maxDateObj.getMonth() + 1).padStart(2, '0')}-${String(maxDateObj.getDate()).padStart(2, '0')}`;
+                        window.showAlert(`Vigencia de Proyecto Excedida: El proyecto dura un máximo de ${configuredDays} días. La fecha fin de la tarea no puede superar el límite del ${maxDateStr}.`);
+                        return; // Bloquear guardado
+                    }
+                    // ------------------------------------------
+
                     const labelsInput = document.getElementById('task-labels').value;
                     const labels = labelsInput ? labelsInput.split(',').map(l => l.trim().startsWith('#') ? l.trim() : '#' + l.trim()).filter(l => l !== '#') : [];
 
-                    // Extraer Links Dinámicos asegurando el contenedor del modal
+                    // Extraer Links Dinámicos
                     const linksContainer = document.getElementById('task-links-container');
                     const links = Array.from(linksContainer.querySelectorAll('.link-input')).map(i => i.value.trim()).filter(v => v);
                     
-                    // Extraer Subtareas Dinámicas asegurando el contenedor del modal
+                    // Extraer Subtareas Dinámicas
                     const subtasksContainer = document.getElementById('task-subtasks-container');
                     const subtasks = Array.from(subtasksContainer.querySelectorAll('.subtask-item')).map(div => {
                         const titleInput = div.querySelector('.subtask-title-input');
@@ -2004,6 +2051,7 @@
         }
 
         window.renderUI = renderUI;
+        window.renderGanttView = renderGanttView;
 
         init();
     </script>
