@@ -104,7 +104,117 @@
         
         /* Animaciones para Subtareas */
         .subtask-item { transition: all 0.2s ease-in-out; }
-    </style>
+    
+        /* --- PESTAÑA GANTT INTEGRADA AL KANBAN --- */
+        .gantt-shell { min-height: 70vh; }
+        .gantt-board { display: grid; grid-template-columns: 420px minmax(720px, 1fr); overflow: hidden; }
+        .gantt-left, .gantt-right { max-height: 72vh; overflow: auto; }
+        .gantt-left { border-right: 1px solid #e2e8f0; }
+        html.dark .gantt-left { border-right-color: rgba(71, 85, 105, 0.45); }
+        .gantt-head-row, .gantt-data-row, .gantt-group-row, .gantt-role-row { display: grid; grid-template-columns: 1.6fr .8fr .7fr .8fr; align-items: center; min-height: 42px; border-bottom: 1px solid #edf2f7; }
+        html.dark .gantt-head-row, html.dark .gantt-data-row, html.dark .gantt-group-row, html.dark .gantt-role-row { border-bottom-color: rgba(71, 85, 105, 0.35); }
+        .gantt-head-row { position: sticky; top: 0; z-index: 10; background: #f8fafc; }
+        html.dark .gantt-head-row { background: rgba(15, 23, 42, .96); }
+        .gantt-cell { padding: 0 14px; min-width: 0; }
+        .gantt-group-row { background: rgba(238, 242, 255, .75); font-weight: 900; }
+        html.dark .gantt-group-row { background: rgba(49, 46, 129, .18); }
+        .gantt-role-row { background: rgba(248, 250, 252, .85); color: #64748b; font-weight: 900; }
+        html.dark .gantt-role-row { background: rgba(30, 41, 59, .45); color: #cbd5e1; }
+        .gantt-task-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .gantt-subtask-title { padding-left: 22px; color: #64748b; }
+        html.dark .gantt-subtask-title { color: #cbd5e1; }
+        .gantt-timeline { position: relative; width: max-content; min-width: 100%; }
+        .gantt-months, .gantt-days { display: grid; position: sticky; top: 0; z-index: 8; background: #f8fafc; }
+        html.dark .gantt-months, html.dark .gantt-days { background: rgba(15, 23, 42, .96); }
+        .gantt-months { height: 28px; }
+        .gantt-days { top: 28px; height: 34px; border-bottom: 1px solid #e2e8f0; }
+        html.dark .gantt-days { border-bottom-color: rgba(71, 85, 105, .45); }
+        .gantt-month, .gantt-day { border-right: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; }
+        html.dark .gantt-month, html.dark .gantt-day { border-right-color: rgba(71, 85, 105, .35); }
+        .gantt-month { justify-content: flex-start; padding-left: 10px; }
+        .gantt-day.weekend, .gantt-grid-day.weekend { background: rgba(241, 245, 249, .75); }
+        html.dark .gantt-day.weekend, html.dark .gantt-grid-day.weekend { background: rgba(30, 41, 59, .5); }
+        .gantt-body { position: relative; }
+        .gantt-grid { position: absolute; inset: 0; display: grid; pointer-events: none; z-index: 0; }
+        .gantt-grid-day { border-right: 1px solid #eef2f7; }
+        html.dark .gantt-grid-day { border-right-color: rgba(71, 85, 105, .28); }
+        .gantt-bars { position: relative; z-index: 1; }
+        .gantt-chart-row, .gantt-chart-group, .gantt-chart-role { position: relative; min-height: 42px; border-bottom: 1px solid #edf2f7; }
+        .gantt-chart-group { background: rgba(238, 242, 255, .5); }
+        .gantt-chart-role { background: rgba(248, 250, 252, .6); }
+        html.dark .gantt-chart-row, html.dark .gantt-chart-group, html.dark .gantt-chart-role { border-bottom-color: rgba(71, 85, 105, .35); }
+        .gantt-bar { position: absolute; top: 10px; height: 22px; border-radius: .75rem; color: white; padding: 0 10px; display: flex; align-items: center; gap: 6px; font-size: 10px; font-weight: 900; overflow: hidden; white-space: nowrap; box-shadow: 0 10px 18px rgba(15, 23, 42, .14); cursor: pointer; }
+        .gantt-bar::after { content: ''; position: absolute; inset: 0; width: var(--progress); background: rgba(255,255,255,.24); pointer-events: none; }
+        .gantt-bar span { position: relative; z-index: 1; overflow: hidden; text-overflow: ellipsis; }
+        .gantt-bar.subtask { height: 16px; top: 13px; opacity: .85; }
+        .gantt-today { position: absolute; top: -62px; bottom: 0; width: 2px; background: rgba(79, 70, 229, .75); z-index: 5; pointer-events: none; }
+        .gantt-summary-pill { border-radius: 1rem; padding: .75rem 1rem; }
+        @media (max-width: 1100px) { .gantt-board { grid-template-columns: 360px minmax(620px, 1fr); } }
+
+        /* --- MEJORAS DE JERARQUÍA Y SCROLL SINCRONIZADO GANTT --- */
+        .gantt-board { grid-template-columns: 500px minmax(760px, 1fr); }
+        .gantt-head-row, .gantt-data-row, .gantt-group-row, .gantt-role-row { grid-template-columns: 2.1fr 1fr .8fr .7fr; }
+        .gantt-left, .gantt-right { scroll-behavior: smooth; }
+        .gantt-group-row, .gantt-chart-group { min-height: 48px; }
+        .gantt-role-row, .gantt-chart-role { min-height: 38px; }
+        .gantt-data-row, .gantt-chart-row { min-height: 44px; }
+        .gantt-group-row .gantt-cell:first-child { display: flex; align-items: center; gap: .65rem; }
+        .gantt-group-dot { width: 12px; height: 12px; border-radius: 999px; box-shadow: 0 0 0 4px rgba(99, 102, 241, .12); flex: 0 0 auto; }
+        .gantt-role-row .gantt-cell:first-child { padding-left: 28px; }
+        .gantt-data-row .gantt-cell:first-child { padding-left: 44px; border-left: 3px solid transparent; }
+        .gantt-data-row.subtask-row .gantt-cell:first-child { padding-left: 72px; }
+        .gantt-task-stack { min-width: 0; display: grid; gap: 2px; }
+        .gantt-task-meta { color: #64748b; font-size: 9px; font-weight: 900; text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        html.dark .gantt-task-meta { color: #94a3b8; }
+        .gantt-status-pill { display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; padding: 4px 8px; color: white; font-size: 9px; font-weight: 900; }
+        .gantt-time-pill { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; border-radius: 999px; padding: 4px 8px; background: #f1f5f9; color: #334155; font-weight: 900; }
+        html.dark .gantt-time-pill { background: rgba(51, 65, 85, .75); color: #e2e8f0; }
+        .gantt-bar { border: 1px solid rgba(255,255,255,.22); }
+        .gantt-bar.subtask { border-radius: .55rem; }
+        .gantt-bar.overdue { box-shadow: 0 0 0 3px rgba(239, 68, 68, .18), 0 10px 18px rgba(15, 23, 42, .14); }
+        .subtask-duration-input { max-width: 92px; }
+        @media (max-width: 1100px) { .gantt-board { grid-template-columns: 420px minmax(680px, 1fr); } }
+
+        /* --- AJUSTES FINALES GANTT: SCROLL ÚNICO, DENSIDAD Y COLOR --- */
+        body { background-image: radial-gradient(at 0% 0%, hsla(210, 100%, 94%, 1) 0px, transparent 46%), radial-gradient(at 88% 12%, hsla(265, 95%, 94%, .95) 0px, transparent 42%), radial-gradient(at 50% 100%, hsla(175, 80%, 92%, .8) 0px, transparent 42%); }
+        html.dark body { background-image: radial-gradient(at 0% 0%, hsla(220, 70%, 18%, 1) 0px, transparent 48%), radial-gradient(at 100% 0%, hsla(282, 55%, 20%, .95) 0px, transparent 45%), radial-gradient(at 48% 100%, hsla(190, 55%, 15%, .75) 0px, transparent 42%); }
+        .glass-ui { box-shadow: 0 14px 35px -28px rgba(79, 70, 229, .42), 0 1px 3px rgba(15, 23, 42, .08); }
+        html.dark .glass-ui { box-shadow: 0 0 0 1px rgba(129, 140, 248, .12), 0 18px 55px -34px rgba(56, 189, 248, .45); }
+        .gantt-board { overflow: auto; max-height: 72vh; align-items: start; }
+        .gantt-left, .gantt-right { max-height: none; overflow: visible; }
+        .gantt-left { position: sticky; left: 0; z-index: 12; background: rgba(255,255,255,.94); backdrop-filter: blur(14px); }
+        html.dark .gantt-left { background: rgba(15, 23, 42, .94); }
+        .gantt-head-row { top: 0; }
+        .gantt-months { top: 0; }
+        .gantt-days { top: 28px; }
+        .gantt-controls { display: flex; flex-wrap: wrap; gap: .75rem; align-items: center; justify-content: flex-end; }
+        .gantt-density-select { min-width: 152px; }
+        .gantt-chart-group { background: linear-gradient(90deg, rgba(99,102,241,.12), rgba(14,165,233,.06)); }
+        html.dark .gantt-chart-group { background: linear-gradient(90deg, rgba(99,102,241,.22), rgba(14,165,233,.09)); }
+        .gantt-chart-row { background: rgba(255,255,255,.34); }
+        html.dark .gantt-chart-row { background: rgba(15,23,42,.08); }
+        .gantt-bar.task-main { background-image: linear-gradient(90deg, rgba(255,255,255,.18), rgba(255,255,255,0)) !important; outline: 2px solid rgba(255,255,255,.42); outline-offset: -2px; }
+        .gantt-bar.subtask { filter: saturate(.9) brightness(1.04); }
+        html.dark .gantt-bar.task-main { box-shadow: 0 0 18px rgba(99,102,241,.28), 0 10px 18px rgba(0,0,0,.22); }
+        .subtask-duration-wrap { display: grid; grid-template-columns: 1fr; gap: 3px; }
+        .subtask-duration-wrap span { text-align: center; font-size: 8px; line-height: 1; font-weight: 900; color: #64748b; text-transform: uppercase; }
+        html.dark .subtask-duration-wrap span { color: #94a3b8; }
+
+        /* --- AJUSTE DE ALINEACIÓN E INDICADORES GANTT --- */
+        .gantt-head-row { min-height: 62px; height: 62px; }
+        .gantt-board.compact .gantt-head-row { min-height: 54px; height: 54px; }
+        .gantt-board.compact .gantt-months { height: 24px; }
+        .gantt-board.compact .gantt-days { top: 24px; height: 30px; }
+        .gantt-board.compact .gantt-today { top: -54px; }
+        .gantt-board.detailed .gantt-months { height: 30px; }
+        .gantt-board.detailed .gantt-days { top: 30px; height: 32px; }
+        .gantt-board.detailed .gantt-today { top: -62px; }
+        .gantt-board.compact .gantt-day { font-size: 8px; }
+        .gantt-board.compact .gantt-task-meta { display: none; }
+        .gantt-board.compact .gantt-cell { padding-left: 10px; padding-right: 10px; }
+        .gantt-indicator-option { display: flex; align-items: center; gap: .5rem; padding: .65rem .75rem; border-radius: .9rem; }
+        .gantt-indicator-option input { width: 1rem; height: 1rem; }
+</style>
 </head>
 <body class="font-sans p-4 md:p-6 custom-scrollbar overflow-x-hidden">
 
@@ -269,6 +379,7 @@
             <!-- Tablero / Historial Glass -->
             <div class="flex glass-ui p-1.5 rounded-2xl w-full lg:w-auto">
                 <button id="view-kanban" onclick="switchView('kanban')" class="flex-1 px-6 py-2 rounded-xl text-xs font-black bg-indigo-600/90 text-white shadow uppercase border border-indigo-500/50">Tablero</button>
+                <button id="view-gantt" onclick="switchView('gantt')" class="flex-1 px-6 py-2 rounded-xl text-xs font-black text-slate-600 dark:text-slate-400 uppercase border border-transparent">Gantt</button>
                 <button id="view-archive" onclick="switchView('archive')" class="flex-1 px-6 py-2 rounded-xl text-xs font-black text-slate-600 dark:text-slate-400 uppercase border border-transparent">Historial</button>
             </div>
             
@@ -310,6 +421,51 @@
         </div>
     </div>
 
+
+    <!-- GANTT VIEW -->
+    <div id="gantt-view" class="hidden relative z-10">
+        <div class="gantt-shell glass-ui rounded-[2rem] shadow-xl overflow-hidden">
+            <div class="p-6 md:p-8 border-b border-slate-200 dark:border-slate-700/50 flex flex-col xl:flex-row gap-4 xl:items-end xl:justify-between">
+                <div>
+                    <p class="text-[10px] font-black text-indigo-600 dark:text-indigo-300 uppercase tracking-[0.25em] mb-2">Planificación temporal conectada al tablero</p>
+                    <h2 class="text-3xl font-black text-slate-900 dark:text-white tracking-tighter">Diagrama Gantt del Proyecto BI</h2>
+                    <p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-2 max-w-3xl">Usa las mismas tareas, responsables, estados, fechas, roles, etiquetas y subtareas del Kanban. Al editar una barra se abre el detalle original de la tarea.</p>
+                </div>
+                <div class="gantt-controls w-full xl:w-auto">
+                    <label class="glass-ui px-4 py-3 rounded-2xl text-[10px] font-black text-slate-600 dark:text-slate-300 uppercase tracking-widest">
+                        Vista
+                        <select id="gantt-density" onchange="renderGanttView()" class="gantt-density-select bg-transparent text-slate-800 dark:text-white outline-none ml-2">
+                            <option value="detailed" selected>Detallada</option>
+                            <option value="compact">Compacta</option>
+                        </select>
+                    </label>
+                    <div id="gantt-summary" class="grid grid-cols-2 lg:grid-cols-4 gap-3 w-full xl:w-auto"></div>
+                </div>
+            </div>
+            <div class="gantt-board">
+                <div class="gantt-left custom-scrollbar">
+                    <div class="gantt-head-row text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                        <div class="gantt-cell">Actividad</div>
+                        <div class="gantt-cell">Responsable</div>
+                        <div class="gantt-cell">Estado</div>
+                        <div class="gantt-cell">Tiempo</div>
+                    </div>
+                    <div id="gantt-table"></div>
+                </div>
+                <div class="gantt-right custom-scrollbar">
+                    <div class="gantt-timeline" id="gantt-timeline">
+                        <div class="gantt-months text-[10px] font-black text-slate-600 dark:text-slate-300 uppercase" id="gantt-months"></div>
+                        <div class="gantt-days text-[9px] font-black text-slate-500 dark:text-slate-400" id="gantt-days"></div>
+                        <div class="gantt-body" id="gantt-body">
+                            <div class="gantt-grid" id="gantt-grid"></div>
+                            <div class="gantt-today" id="gantt-today"></div>
+                            <div class="gantt-bars" id="gantt-bars"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- ARCHIVE VIEW -->
     <div id="archive-view" class="hidden relative z-10">
         <div class="glass-ui p-8 md:p-12 rounded-[2rem] shadow-xl">
@@ -426,6 +582,21 @@
                             <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-1">Enlace INFOPUCP Base 🎓</label>
                             <input type="url" id="edit-pucp-link" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-xs font-bold outline-none focus:border-indigo-500/50">
                         </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-1">Duración del Proyecto (días) 📆</label>
+                            <input type="number" min="1" max="730" id="edit-project-days" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-xs font-bold outline-none focus:border-indigo-500/50" placeholder="Ej. 30">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-black text-slate-600 dark:text-slate-400 uppercase mb-1">Indicadores Gantt 📊</label>
+                            <select id="edit-gantt-scope" class="w-full glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-xs font-bold outline-none focus:border-indigo-500/50">
+                                <option value="filtered">Según filtros actuales</option>
+                                <option value="all">Todo el tablero activo</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <label class="gantt-indicator-option glass-ui text-[10px] font-black text-slate-600 dark:text-slate-300 uppercase"><input type="checkbox" id="edit-progress-review"> Revisión cuenta avance</label>
+                            <label class="gantt-indicator-option glass-ui text-[10px] font-black text-slate-600 dark:text-slate-300 uppercase"><input type="checkbox" id="edit-progress-done"> Finalizado cuenta avance</label>
+                        </div>
                     </div>
                 </div>
 
@@ -517,7 +688,7 @@
         let tasks = [];
         let roles = [];
         let registeredUsers = [];
-        let config = { available: true, link: '#', infoPucpLink: '#', customLinks: [] };
+        let config = { available: true, link: '#', infoPucpLink: '#', customLinks: [], projectDays: 30, ganttIndicatorScope: 'filtered', ganttProgressStatuses: ['review', 'done'] };
         
         let currentFilter = 'all';
         let currentAssigneeFilter = 'all';
@@ -776,13 +947,17 @@
             container.appendChild(div);
         };
 
-        window.addSubtaskInput = (title = '', done = false) => {
+        window.addSubtaskInput = (title = '', done = false, durationDays = 1) => {
             const container = document.getElementById('task-subtasks-container');
             const div = document.createElement('div');
-            div.className = 'flex gap-2 items-center subtask-item';
+            div.className = 'grid grid-cols-[auto_1fr_92px_auto] gap-2 items-center subtask-item';
             div.innerHTML = `
                 <input type="checkbox" class="subtask-done-cb w-5 h-5 rounded border-slate-300 cursor-pointer" ${done ? 'checked' : ''}>
-                <input type="text" value="${title}" placeholder="Título de la tarea agrupada..." class="subtask-title-input flex-1 glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-sm outline-none focus:border-indigo-500/50 transition-colors">
+                <input type="text" value="${title}" placeholder="Título de la tarea agrupada..." class="subtask-title-input min-w-0 glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-sm outline-none focus:border-indigo-500/50 transition-colors">
+                <div class="subtask-duration-wrap">
+                    <input type="number" min="1" value="${Math.max(1, Number(durationDays) || 1)}" title="Días de la subtarea" placeholder="Días" aria-label="Días de la subtarea" class="subtask-duration-input glass-ui text-slate-900 dark:text-white rounded-xl p-3 text-sm font-black outline-none focus:border-indigo-500/50 transition-colors">
+                    <span>días</span>
+                </div>
                 <button type="button" onclick="this.parentElement.remove()" class="bg-red-50 dark:bg-red-900/30 text-red-500 hover:text-red-700 hover:bg-red-100 p-3 rounded-xl border border-transparent shadow-none transition-colors">❌</button>
             `;
             container.appendChild(div);
@@ -807,6 +982,282 @@
             }
         };
 
+
+        const ganttStatusMeta = {
+            backlog: { label: 'Backlog', color: '#2563eb', tint: 'bg-blue-50 dark:bg-slate-800/40' },
+            todo: { label: 'Por hacer', color: '#f59e0b', tint: 'bg-amber-50 dark:bg-amber-900/20' },
+            progress: { label: 'En proceso', color: '#6366f1', tint: 'bg-indigo-50 dark:bg-indigo-900/20' },
+            review: { label: 'Revisión', color: '#a855f7', tint: 'bg-purple-50 dark:bg-purple-900/20' },
+            done: { label: 'Finalizado', color: '#10b981', tint: 'bg-emerald-50 dark:bg-emerald-900/20' }
+        };
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[char]));
+        }
+
+        function ganttDate(value) {
+            if (!value) return null;
+            const parts = String(value).split('-').map(Number);
+            if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
+            return new Date(parts[0], parts[1] - 1, parts[2]);
+        }
+
+        function ganttAddDays(date, days) {
+            const next = new Date(date);
+            next.setDate(next.getDate() + days);
+            return next;
+        }
+
+        function ganttDiffDays(a, b) {
+            const startA = new Date(a.getFullYear(), a.getMonth(), a.getDate());
+            const startB = new Date(b.getFullYear(), b.getMonth(), b.getDate());
+            return Math.round((startA - startB) / 86400000);
+        }
+
+        function ganttTaskStart(task) {
+            return ganttDate(task.dateStart) || ganttDate(task.dateEnd) || new Date();
+        }
+
+        function ganttTaskEnd(task) {
+            const start = ganttTaskStart(task);
+            const explicitEnd = ganttDate(task.dateEnd);
+            return explicitEnd && explicitEnd >= start ? explicitEnd : start;
+        }
+
+        function getTaskDurationDays(startValue, endValue) {
+            const start = ganttDate(startValue);
+            const end = ganttDate(endValue);
+            if (!start && !end) return 1;
+            if (start && end && end >= start) return ganttDiffDays(end, start) + 1;
+            return 1;
+        }
+
+        function ganttIsCompact() {
+            return document.getElementById('gantt-density')?.value === 'compact';
+        }
+
+        function ganttRowHeight(row) {
+            if (ganttIsCompact()) {
+                if (row.type === 'group') return 34;
+                if (row.type === 'role') return 28;
+                return 32;
+            }
+            if (row.type === 'group') return 58;
+            if (row.type === 'role') return 44;
+            return 52;
+        }
+
+        function ganttStatusColor(status) {
+            return (ganttStatusMeta[status || 'backlog'] || ganttStatusMeta.backlog).color;
+        }
+
+        function ganttSmartColor(task, role) {
+            if (task.status === 'done') return '#10b981';
+            const end = ganttTaskEnd(task);
+            const isLate = task.status !== 'done' && end < new Date();
+            if (isLate) return '#ef4444';
+            if (task.status === 'review') return '#a855f7';
+            if (task.status === 'progress') return role?.color || '#6366f1';
+            return ganttStatusColor(task.status);
+        }
+
+        function setupGanttScrollSync() {
+            const left = document.querySelector('.gantt-left');
+            const right = document.querySelector('.gantt-right');
+            if (!left || !right || left.dataset.synced === 'true') return;
+            left.dataset.synced = 'true';
+            right.dataset.synced = 'true';
+            let locking = false;
+            const sync = (source, target) => {
+                if (locking) return;
+                locking = true;
+                target.scrollTop = source.scrollTop;
+                requestAnimationFrame(() => { locking = false; });
+            };
+            left.addEventListener('scroll', () => sync(left, right));
+            right.addEventListener('scroll', () => sync(right, left));
+        }
+        function ganttTaskProgress(task) {
+            if (task.status === 'done') return 100;
+            const subtasks = task.subtasks || [];
+            if (subtasks.length) return Math.round((subtasks.filter(st => st.done).length / subtasks.length) * 100);
+            if (task.status === 'review') return 80;
+            if (task.status === 'progress') return 50;
+            if (task.status === 'todo') return 15;
+            return 0;
+        }
+
+        function ganttVisibleTasks() {
+            return tasks.filter(t => {
+                const activeStatus = ['backlog', 'todo', 'progress', 'review', 'done'].includes(t.status || 'backlog');
+                const labelMatch = currentFilter === 'all' || (t.labels && t.labels.includes(currentFilter));
+                const assigneeMatch = currentAssigneeFilter === 'all' || t.assignee === currentAssigneeFilter;
+                return activeStatus && labelMatch && assigneeMatch;
+            }).sort((a, b) => ganttTaskStart(a) - ganttTaskStart(b));
+        }
+
+        function ganttRows() {
+            const rows = [];
+            const statuses = ['backlog', 'todo', 'progress', 'review', 'done'];
+            const visible = ganttVisibleTasks();
+            statuses.forEach(status => {
+                const statusTasks = visible.filter(t => (t.status || 'backlog') === status);
+                if (!statusTasks.length) return;
+                rows.push({ type: 'group', status });
+                const roleIds = [...new Set(statusTasks.map(t => t.role || 'sin-rol'))];
+                roleIds.forEach(roleId => {
+                    const role = roles.find(r => r.id === roleId) || { id: roleId, name: roleId === 'sin-rol' ? 'Sin rol' : roleId, emoji: '◆', color: ganttStatusMeta[status].color };
+                    rows.push({ type: 'role', status, role });
+                    statusTasks.filter(t => (t.role || 'sin-rol') === roleId).forEach(task => {
+                        rows.push({ type: 'task', status, role, task });
+                        (task.subtasks || []).forEach((subtask, index) => rows.push({ type: 'subtask', status, role, task, subtask, index }));
+                    });
+                });
+            });
+            return rows;
+        }
+
+
+        function ganttIndicatorTasks() {
+            const active = tasks.filter(t => ['backlog', 'todo', 'progress', 'review', 'done'].includes(t.status || 'backlog'));
+            if ((config.ganttIndicatorScope || 'filtered') === 'all') return active;
+            return ganttVisibleTasks();
+        }
+
+        function ganttProgressFromStatus(task) {
+            const statuses = config.ganttProgressStatuses || ['review', 'done'];
+            if (task.status === 'done' && statuses.includes('done')) return 100;
+            if (task.status === 'review' && statuses.includes('review')) return 100;
+            return 0;
+        }
+        function renderGanttView() {
+            const table = document.getElementById('gantt-table');
+            const months = document.getElementById('gantt-months');
+            const days = document.getElementById('gantt-days');
+            const grid = document.getElementById('gantt-grid');
+            const bars = document.getElementById('gantt-bars');
+            const body = document.getElementById('gantt-body');
+            const timeline = document.getElementById('gantt-timeline');
+            const todayLine = document.getElementById('gantt-today');
+            const summary = document.getElementById('gantt-summary');
+            if (!table || !months || !days || !grid || !bars || !body || !timeline || !summary) return;
+
+            const visible = ganttVisibleTasks();
+            const rows = ganttRows();
+            if (!visible.length) {
+                table.innerHTML = '<div class="p-10 text-center text-xs font-black text-slate-500 uppercase">No hay tareas para los filtros actuales</div>';
+                months.innerHTML = days.innerHTML = grid.innerHTML = bars.innerHTML = '';
+                summary.innerHTML = '';
+                return;
+            }
+
+            const starts = visible.map(ganttTaskStart);
+            const ends = visible.map(ganttTaskEnd);
+            const minDate = ganttAddDays(new Date(Math.min(...starts)), -2);
+            const configuredDays = Math.max(1, Number(config.projectDays || 0));
+            const naturalProjectDays = ganttDiffDays(new Date(Math.max(...ends)), new Date(Math.min(...starts))) + 1;
+            const projectHorizonDays = Math.max(naturalProjectDays, configuredDays);
+            const configuredEnd = ganttAddDays(new Date(Math.min(...starts)), projectHorizonDays - 1);
+            const maxDate = ganttAddDays(new Date(Math.max(...ends, configuredEnd)), 3);
+            const totalDays = Math.max(1, ganttDiffDays(maxDate, minDate) + 1);
+            const rightViewport = document.querySelector('.gantt-right')?.clientWidth || 760;
+            const fittedDayWidth = Math.floor(rightViewport / Math.max(totalDays, 1));
+            const dayWidth = ganttIsCompact() ? Math.max(12, Math.min(28, fittedDayWidth)) : 54;
+            const totalHeight = rows.reduce((sum, row) => sum + ganttRowHeight(row), 0);
+            const dayList = Array.from({ length: totalDays }, (_, index) => ganttAddDays(minDate, index));
+            const template = `repeat(${totalDays}, ${dayWidth}px)`;
+            months.style.gridTemplateColumns = template;
+            days.style.gridTemplateColumns = template;
+            grid.style.gridTemplateColumns = template;
+            timeline.style.width = `${totalDays * dayWidth}px`;
+            body.style.height = `${totalHeight}px`;
+
+            const monthSpans = [];
+            dayList.forEach(date => {
+                const key = `${date.getFullYear()}-${date.getMonth()}`;
+                const last = monthSpans[monthSpans.length - 1];
+                if (last && last.key === key) last.span += 1;
+                else monthSpans.push({ key, span: 1, label: date.toLocaleDateString('es-PE', { month: 'long', year: 'numeric' }) });
+            });
+            months.innerHTML = monthSpans.map(month => `<div class="gantt-month" style="grid-column: span ${month.span}">${month.label}</div>`).join('');
+            days.innerHTML = dayList.map(date => `<div class="gantt-day ${[0,6].includes(date.getDay()) ? 'weekend' : ''}">${date.toLocaleDateString('es-PE', { weekday: 'short' }).slice(0, 1).toUpperCase()} ${String(date.getDate()).padStart(2, '0')}</div>`).join('');
+            grid.innerHTML = dayList.map(date => `<div class="gantt-grid-day ${[0,6].includes(date.getDay()) ? 'weekend' : ''}"></div>`).join('');
+
+            table.innerHTML = rows.map(row => {
+                const heightStyle = `style="min-height:${ganttRowHeight(row)}px"`;
+                if (row.type === 'group') {
+                    const meta = ganttStatusMeta[row.status];
+                    const count = visible.filter(t => (t.status || 'backlog') === row.status).length;
+                    const statusTasks = visible.filter(t => (t.status || 'backlog') === row.status);
+                    const statusDays = statusTasks.length ? (ganttDiffDays(new Date(Math.max(...statusTasks.map(ganttTaskEnd))), new Date(Math.min(...statusTasks.map(ganttTaskStart)))) + 1) : 0;
+                    return `<div class="gantt-group-row text-[10px] uppercase" ${heightStyle}><div class="gantt-cell"><span class="gantt-group-dot" style="background:${meta.color}"></span>${meta.label}</div><div class="gantt-cell">${count} tareas</div><div class="gantt-cell"><span class="gantt-status-pill" style="background:${meta.color}">Estado</span></div><div class="gantt-cell"><span class="gantt-time-pill">${statusDays}d</span></div></div>`;
+                }
+                if (row.type === 'role') {
+                    const roleTasks = visible.filter(t => (t.status || 'backlog') === row.status && (t.role || 'sin-rol') === row.role.id);
+                    return `<div class="gantt-role-row text-[10px] uppercase" ${heightStyle}><div class="gantt-cell">${row.role.emoji || '◆'} Rol: ${escapeHtml(row.role.name)}</div><div class="gantt-cell">${roleTasks.length} asignadas</div><div class="gantt-cell"></div><div class="gantt-cell"></div></div>`;
+                }
+                const task = row.task;
+                const meta = ganttStatusMeta[task.status || 'backlog'];
+                if (row.type === 'subtask') {
+                    const duration = Math.max(1, Number(row.subtask.durationDays || row.subtask.duration || 1));
+                    return `<div class="gantt-data-row subtask-row text-[10px]" ${heightStyle}><div class="gantt-cell"><div class="gantt-task-stack"><span class="gantt-task-title gantt-subtask-title">↳ ${escapeHtml(row.subtask.title || 'Subtarea')}</span><span class="gantt-task-meta">Subtarea de ${escapeHtml(task.title)}</span></div></div><div class="gantt-cell">${escapeHtml(task.assignee || 'S/A')}</div><div class="gantt-cell"><span class="gantt-status-pill" style="background:${row.subtask.done ? '#10b981' : meta.color}">${row.subtask.done ? 'Hecha' : 'Pendiente'}</span></div><div class="gantt-cell"><span class="gantt-time-pill">${duration}d</span></div></div>`;
+                }
+                const duration = ganttDiffDays(ganttTaskEnd(task), ganttTaskStart(task)) + 1;
+                const labelText = (task.labels || []).join(' · ') || 'Sin etiquetas';
+                return `<div class="gantt-data-row text-[10px] cursor-pointer" ${heightStyle} onclick="window.editTask('${task.id}')"><div class="gantt-cell" style="border-left-color:${meta.color}"><div class="gantt-task-stack"><span class="gantt-task-title font-black text-slate-800 dark:text-slate-100">${escapeHtml(task.title)}</span><span class="gantt-task-meta">${escapeHtml(labelText)}</span></div></div><div class="gantt-cell">${escapeHtml(task.assignee || 'S/A')}</div><div class="gantt-cell"><span class="gantt-status-pill" style="background:${meta.color}">${meta.label}</span></div><div class="gantt-cell"><span class="gantt-time-pill">${duration}d</span></div></div>`;
+            }).join('');
+
+            bars.innerHTML = rows.map((row) => {
+                const heightStyle = `style="min-height:${ganttRowHeight(row)}px"`;
+                if (row.type === 'group') return `<div class="gantt-chart-group" ${heightStyle}></div>`;
+                if (row.type === 'role') return `<div class="gantt-chart-role" ${heightStyle}></div>`;
+                const task = row.task;
+                const taskStart = ganttTaskStart(task);
+                let start = taskStart;
+                let end = ganttTaskEnd(task);
+                let progress = ganttTaskProgress(task);
+                let title = task.title;
+                let isSubtask = false;
+                let color = ganttSmartColor(task, row.role);
+                if (row.type === 'subtask') {
+                    const taskDuration = Math.max(1, ganttDiffDays(ganttTaskEnd(task), taskStart) + 1);
+                    const usedBefore = (task.subtasks || []).slice(0, row.index).reduce((sum, st) => sum + Math.max(1, Number(st.durationDays || st.duration || 1)), 0);
+                    const rawDuration = Math.max(1, Number(row.subtask.durationDays || row.subtask.duration || 1));
+                    const safeOffset = Math.min(usedBefore, taskDuration - 1);
+                    const safeDuration = Math.max(1, Math.min(rawDuration, taskDuration - safeOffset));
+                    start = ganttAddDays(taskStart, safeOffset);
+                    end = ganttAddDays(start, safeDuration - 1);
+                    progress = row.subtask.done ? 100 : 0;
+                    title = row.subtask.title || 'Subtarea';
+                    color = row.subtask.done ? '#10b981' : ganttSmartColor(task, row.role);
+                    isSubtask = true;
+                }
+                const left = ganttDiffDays(start, minDate) * dayWidth;
+                const width = Math.max((ganttDiffDays(end, start) + 1) * dayWidth - 8, isSubtask ? 30 : 40);
+                const overdue = task.status !== 'done' && end < new Date();
+                return `<div class="gantt-chart-row" ${heightStyle}><button type="button" onclick="window.editTask('${task.id}')" class="gantt-bar ${isSubtask ? 'subtask' : 'task-main'} ${overdue ? 'overdue' : ''}" style="left:${left}px;width:${width}px;background:${color};--progress:${progress}%"><span>${escapeHtml(title)}</span></button></div>`;
+            }).join('');
+
+            const today = new Date();
+            const todayOffset = ganttDiffDays(today, minDate) * dayWidth + dayWidth / 2;
+            todayLine.style.left = `${todayOffset}px`;
+            todayLine.style.display = todayOffset >= 0 && todayOffset <= totalDays * dayWidth ? 'block' : 'none';
+
+            const indicatorTasks = ganttIndicatorTasks();
+            const indicatorStarts = indicatorTasks.map(ganttTaskStart);
+            const indicatorEnds = indicatorTasks.map(ganttTaskEnd);
+            const naturalIndicatorDays = indicatorTasks.length ? (ganttDiffDays(new Date(Math.max(...indicatorEnds)), new Date(Math.min(...indicatorStarts))) + 1) : 0;
+            const projectDays = Math.max(Number(config.projectDays || 0), naturalIndicatorDays, projectHorizonDays);
+            const advancedCount = indicatorTasks.filter(task => ganttProgressFromStatus(task) === 100).length;
+            const progressPct = indicatorTasks.length ? Math.round((advancedCount / indicatorTasks.length) * 100) : 0;
+            const people = new Set(indicatorTasks.map(t => t.assignee).filter(Boolean)).size;
+            summary.innerHTML = [
+                ['Tareas', indicatorTasks.length],
+                ['Duración', `${projectDays} días`],
+                ['Avance', `${advancedCount}/${indicatorTasks.length} (${progressPct}%)`],
+                ['Responsables', people]
+            ].map(([label, value]) => `<div class="gantt-summary-pill glass-ui"><p class="text-[9px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest">${label}</p><strong class="text-lg font-black text-slate-900 dark:text-white">${value}</strong></div>`).join('');
+        }
         function renderUI() {
             const statuses = ['backlog', 'todo', 'progress', 'review', 'done'];
             const allLabels = new Set();
@@ -871,7 +1322,7 @@
                                             <div class="w-4 h-4 rounded-[4px] border ${st.done ? 'bg-indigo-500 border-indigo-500 dark:bg-amber-500 dark:border-amber-500 text-white' : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-500'} flex items-center justify-center transition-colors flex-shrink-0">
                                                 ${st.done ? '<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
                                             </div>
-                                            <span class="text-[10px] font-bold ${st.done ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-200'} transition-all">${st.title}</span>
+                                            <span class="text-[10px] font-bold ${st.done ? 'line-through text-slate-400 dark:text-slate-500' : 'text-slate-700 dark:text-slate-200'} transition-all">${st.title}</span><span class="ml-auto text-[9px] font-black text-slate-400 dark:text-slate-500">${st.durationDays || 1}d</span>
                                         </div>
                                     `).join('')}
                                 </div>
@@ -924,6 +1375,7 @@
                 });
             }
 
+            renderGanttView();
             updateFilterUI(Array.from(allLabels));
             updateSuggestions(Array.from(allAssignees), Array.from(allLabels));
         }
@@ -1010,7 +1462,7 @@
 
             onSnapshot(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'master'), (snap) => {
                 if (snap.exists()) { 
-                    config = snap.data(); 
+                    config = { ...config, ...snap.data() }; 
                     updateStatusUI(); 
                     document.getElementById('btn-infopucp').href = config.infoPucpLink || '#';
                     
@@ -1195,6 +1647,9 @@
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'config', 'master'), { 
                 link: document.getElementById('edit-drive-link').value,
                 infoPucpLink: document.getElementById('edit-pucp-link').value,
+                projectDays: Math.max(1, Number(document.getElementById('edit-project-days')?.value || config.projectDays || 30)),
+                ganttIndicatorScope: document.getElementById('edit-gantt-scope')?.value || config.ganttIndicatorScope || 'filtered',
+                ganttProgressStatuses: ['review', 'done'].filter(status => document.getElementById(status === 'review' ? 'edit-progress-review' : 'edit-progress-done')?.checked),
                 customLinks: customLinks
             });
             window.closeFileEditModal();
@@ -1226,7 +1681,7 @@
             const subtasksContainer = document.getElementById('task-subtasks-container');
             subtasksContainer.innerHTML = '';
             const subtasks = task.subtasks || [];
-            subtasks.forEach(st => window.addSubtaskInput(st.title, st.done));
+            subtasks.forEach(st => window.addSubtaskInput(st.title, st.done, st.durationDays || st.duration || 1));
 
             document.getElementById('btn-delete-task').classList.remove('hidden');
             document.getElementById('btn-archive-task').classList.toggle('hidden', task.status === 'archived');
@@ -1379,9 +1834,14 @@
         window.switchView = (view) => {
             currentView = view;
             document.getElementById('kanban-view').classList.toggle('hidden', view !== 'kanban');
+            document.getElementById('gantt-view').classList.toggle('hidden', view !== 'gantt');
             document.getElementById('archive-view').classList.toggle('hidden', view !== 'archive');
-            document.getElementById('view-kanban').className = `flex-1 px-6 py-2 rounded-xl text-xs font-black transition-all ${view === 'kanban' ? 'bg-indigo-600/90 text-white shadow' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'} uppercase border border-transparent`;
-            document.getElementById('view-archive').className = `flex-1 px-6 py-2 rounded-xl text-xs font-black transition-all ${view === 'archive' ? 'bg-indigo-600/90 text-white shadow' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'} uppercase border border-transparent`;
+            const active = 'bg-indigo-600/90 text-white shadow border border-indigo-500/50';
+            const inactive = 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-transparent';
+            document.getElementById('view-kanban').className = `flex-1 px-6 py-2 rounded-xl text-xs font-black transition-all ${view === 'kanban' ? active : inactive} uppercase`;
+            document.getElementById('view-gantt').className = `flex-1 px-6 py-2 rounded-xl text-xs font-black transition-all ${view === 'gantt' ? active : inactive} uppercase`;
+            document.getElementById('view-archive').className = `flex-1 px-6 py-2 rounded-xl text-xs font-black transition-all ${view === 'archive' ? active : inactive} uppercase`;
+            if (view === 'gantt') renderGanttView();
         };
         window.allowDrop = (e) => { e.preventDefault(); e.currentTarget.classList.add('drag-over'); };
         window.setFilter = (t) => { currentFilter = t; renderUI(); };
@@ -1393,6 +1853,15 @@
             
             document.getElementById('edit-drive-link').value = config.link || ''; 
             document.getElementById('edit-pucp-link').value = config.infoPucpLink || '';
+            const projectDaysInput = document.getElementById('edit-project-days');
+            if (projectDaysInput) projectDaysInput.value = config.projectDays || 30;
+            const ganttScopeInput = document.getElementById('edit-gantt-scope');
+            if (ganttScopeInput) ganttScopeInput.value = config.ganttIndicatorScope || 'filtered';
+            const progressStatuses = config.ganttProgressStatuses || ['review', 'done'];
+            const progressReview = document.getElementById('edit-progress-review');
+            const progressDone = document.getElementById('edit-progress-done');
+            if (progressReview) progressReview.checked = progressStatuses.includes('review');
+            if (progressDone) progressDone.checked = progressStatuses.includes('done');
             
             // Cargar enlaces dinámicos en el modal de configuración
             const customLinksConfigContainer = document.getElementById('custom-links-config-container');
@@ -1479,11 +1948,20 @@
                     const subtasks = Array.from(subtasksContainer.querySelectorAll('.subtask-item')).map(div => {
                         const titleInput = div.querySelector('.subtask-title-input');
                         const cbInput = div.querySelector('.subtask-done-cb');
+                        const durationInput = div.querySelector('.subtask-duration-input');
                         return {
                             title: titleInput ? titleInput.value.trim() : '',
-                            done: cbInput ? cbInput.checked : false
+                            done: cbInput ? cbInput.checked : false,
+                            durationDays: Math.max(1, Number(durationInput ? durationInput.value : 1) || 1)
                         };
                     }).filter(st => st.title);
+
+                    const parentDuration = getTaskDurationDays(document.getElementById('task-date-start').value, document.getElementById('task-date-end').value);
+                    const subtasksDuration = subtasks.reduce((sum, st) => sum + (Number(st.durationDays) || 1), 0);
+                    if (subtasks.length && subtasksDuration > parentDuration) {
+                        window.showAlert(`Duración inválida: las subtareas suman ${subtasksDuration} días y la tarea principal dura ${parentDuration} días.`);
+                        return;
+                    }
 
                     const data = {
                         title: document.getElementById('task-title').value, 
